@@ -17,7 +17,7 @@ var (
 	ErrHttpCodeProperty = errorx.RegisterProperty("httpcode")
 	ErrSourceProperty   = errorx.RegisterProperty("source")
 	ErrMessage          = errorx.RegisterProperty("message")
-	ErrNamespace        = errorx.NewNamespace("nobu")
+	ErrNamespace        = errorx.NewNamespace("shoe-shop")
 	ErrBase             = errorx.NewType(ErrNamespace, "base")
 
 	ErrSessionHeader = ErrBase.New("Authorization header is empty").WithProperty(ErrCodeProperty, "401").WithProperty(ErrHttpCodeProperty, 401)
@@ -33,10 +33,6 @@ var (
 	// - validation
 	ErrValidation = ErrBase.New("failed to validate request body").WithProperty(ErrCodeProperty, "1004").WithProperty(ErrHttpCodeProperty, 400)
 )
-
-func WrapErr(err error, message string) *errorx.Error {
-	return errorx.Decorate(err, message)
-}
 
 func ExtractError(err error) ErrorDescription {
 	var (
@@ -79,17 +75,4 @@ func ExtractError(err error) ErrorDescription {
 		FullMessage: err.Error(),
 		Source:      "internal",
 	}
-}
-
-func New(hc int, code, message string) *errorx.Error {
-	return ErrBase.New(message).
-		WithProperty(ErrCodeProperty, code).
-		WithProperty(ErrHttpCodeProperty, hc)
-}
-
-func NewWithSource(hc int, code, message, source string) *errorx.Error {
-	return ErrBase.New(message).
-		WithProperty(ErrCodeProperty, code).
-		WithProperty(ErrHttpCodeProperty, hc).
-		WithProperty(ErrSourceProperty, source)
 }

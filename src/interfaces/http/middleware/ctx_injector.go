@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"shoeshop-backend/src/infrastructure/logger"
+	"shoeshop-backend/src/interfaces/http/context"
 )
 
 const (
@@ -43,7 +44,10 @@ func (i *contextInjectorMiddleware) Injector(h echo.HandlerFunc) echo.HandlerFun
 			c.Request().Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 		}
 
+		appCtx := context.NewApplicationContext(c, i.logger)
+
 		c.Set("RequestTime", time.Now())
+		c.Set("AppContext", appCtx)
 
 		if !i.skipper(c) {
 			i.logger.Info("Incoming",
@@ -60,7 +64,7 @@ func (i *contextInjectorMiddleware) Injector(h echo.HandlerFunc) echo.HandlerFun
 func (i *contextInjectorMiddleware) skipper(c echo.Context) (skip bool) {
 	url := c.Request().URL.String()
 	if url == "/" {
-		skip = false
+		skip = true
 		return
 	}
 

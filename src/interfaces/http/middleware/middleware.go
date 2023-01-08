@@ -18,7 +18,7 @@ func SetupMiddleware(e *echo.Echo, di *di.DI) {
 }
 
 func errorHandler(err error, e echo.Context) {
-	appContext, err := context.NewApplicationContext(e)
+	appContext := context.ParseApplicationContext(e)
 
 	err = appContext.Fail(err)
 	if err != nil {

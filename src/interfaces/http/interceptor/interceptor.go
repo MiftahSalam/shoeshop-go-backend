@@ -1,6 +1,8 @@
 package interceptor
 
 import (
+	"shoeshop-backend/src/interfaces/http/context"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -14,7 +16,9 @@ func NewInterceptor() *Interceptor {
 
 func (i *Interceptor) Interceptor1(h echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		c.Logger().Debug("Interceptor 1")
+		appContext := context.ParseApplicationContext(c)
+		appContext.Logger.Info("Interceptor 1")
+
 		return h(c)
 	}
 }
@@ -22,7 +26,8 @@ func (i *Interceptor) Interceptor1(h echo.HandlerFunc) echo.HandlerFunc {
 func (i *Interceptor) Interceptor2(h echo.HandlerFunc) echo.HandlerFunc {
 
 	return func(c echo.Context) error {
-		c.Logger().Debug("Interceptor 2")
+		appContext := context.ParseApplicationContext(c)
+		appContext.Logger.Info("Interceptor 2")
 		return h(c)
 	}
 

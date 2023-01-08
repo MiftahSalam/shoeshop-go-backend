@@ -21,7 +21,7 @@ func SetupProductHandler(pService product.ProductService) *productHandler {
 }
 
 func (h *productHandler) GetAll(e echo.Context) error {
-	appContext, err := context.NewApplicationContext(e)
+	appContext := context.ParseApplicationContext(e)
 
 	res, err := h.pService.GetProduct(&e)
 	if err != nil {

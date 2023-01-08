@@ -14,6 +14,7 @@ import (
 type (
 	ApplicationContext struct {
 		echo.Context
+		Logger logger.Logger
 	}
 
 	Success struct {
@@ -43,7 +44,7 @@ func (sc *ApplicationContext) Success(data interface{}) error {
 	}
 
 	reqTime := sc.Context.Get("RequestTime").(time.Time)
-	sc.Context.Logger().Info("Outgoing",
+	sc.Logger.Info("Outgoing",
 		logger.ToField("rt", fmt.Sprint(time.Since(reqTime).Milliseconds(), " ms")),
 		logger.ToField("response", res),
 		logger.ToField("http_code", hc))
@@ -60,7 +61,7 @@ func (sc *ApplicationContext) SuccessWithMeta(data, meta interface{}) error {
 	}
 
 	reqTime := sc.Context.Get("RequestTime").(time.Time)
-	sc.Context.Logger().Info("Outgoing",
+	sc.Logger.Info("Outgoing",
 		logger.ToField("rt", fmt.Sprint(time.Since(reqTime).Milliseconds(), " ms")),
 		logger.ToField("response", res),
 		logger.ToField("http_code", hc))
@@ -89,7 +90,7 @@ func (sc *ApplicationContext) FailWithData(err error, data interface{}) error {
 	}
 
 	reqTime := sc.Context.Get("RequestTime").(time.Time)
-	sc.Context.Logger().Info("Outgoing",
+	sc.Logger.Info("Outgoing",
 		logger.ToField("rt", fmt.Sprint(time.Since(reqTime).Milliseconds(), " ms")),
 		logger.ToField("response", res),
 		logger.ToField("http_code", ed.HttpCode))
@@ -103,7 +104,7 @@ func (sc *ApplicationContext) Raw(hc int, data interface{}) error {
 	}
 
 	reqTime := sc.Context.Get("RequestTime").(time.Time)
-	sc.Context.Logger().Info("Outgoing",
+	sc.Logger.Info("Outgoing",
 		logger.ToField("rt", fmt.Sprint(time.Since(reqTime).Milliseconds(), " ms")),
 		logger.ToField("response", data),
 		logger.ToField("http_code", hc))
@@ -111,15 +112,21 @@ func (sc *ApplicationContext) Raw(hc int, data interface{}) error {
 	return sc.JSON(hc, data)
 }
 
-func NewEmptyApplicationContext(parent echo.Context) *ApplicationContext {
-	return &ApplicationContext{parent}
+func NewApplicationContext(parent echo.Context, logger logger.Logger) *ApplicationContext {
+	pctx := &ApplicationContext{Context: parent, Logger: logger}
+
+	return pctx
 }
 
-func NewApplicationContext(parent echo.Context) (*ApplicationContext, error) {
-	pctx, ok := parent.(*ApplicationContext)
-	if !ok {
-		return nil, errors.ErrSession
-	}
+func ParseApplicationContext(c echo.Context) *ApplicationContext {
+	var (
+		nc  = c.Get("AppContext")
+		ctx *ApplicationContext
+	)
 
-	return pctx, nil
+	// request context is mandatory on application context
+	// force casting
+	ctx = nc.(*ApplicationContext)
+
+	return ctx
 }
