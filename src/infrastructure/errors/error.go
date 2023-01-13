@@ -76,3 +76,9 @@ func ExtractError(err error) ErrorDescription {
 		Source:      "internal",
 	}
 }
+
+func New(hc int, code, message string) *errorx.Error {
+	return ErrBase.New(message).
+		WithProperty(ErrCodeProperty, code).
+		WithProperty(ErrHttpCodeProperty, hc)
+}

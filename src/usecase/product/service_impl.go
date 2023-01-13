@@ -1,14 +1,15 @@
 package product
 
-import "github.com/labstack/echo/v4"
+import (
+	"shoeshop-backend/src/interfaces/http/context"
+)
 
-type serviceImpl struct {
-}
+func (s *service) GetProducts(ctx *context.ApplicationContext) (products []*ProductResponse, err error) {
+	getProducts, err := s.pRepo.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-func Setup() *serviceImpl {
-	return &serviceImpl{}
-}
-
-func (s *serviceImpl) GetProduct(ctx *echo.Context) (data interface{}, err error) {
+	products = s.toProductsResponse(getProducts)
 	return
 }

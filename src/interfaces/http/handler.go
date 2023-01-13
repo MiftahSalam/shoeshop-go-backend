@@ -9,7 +9,7 @@ type handler struct {
 }
 
 func setupHandler(di *di.DI) *handler {
-	pHandler := SetupProductHandler(di.ProductService)
+	pHandler := SetupProductHandler(di.ProductView)
 
 	return &handler{
 		pHandler: pHandler,

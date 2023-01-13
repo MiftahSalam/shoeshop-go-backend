@@ -4,26 +4,26 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"shoeshop-backend/src/interfaces/http/context"
-	"shoeshop-backend/src/usecase/product"
+	"shoeshop-backend/src/interfaces/http/view/product"
 )
 
 type productHandler struct {
-	pService product.ProductService
+	pView product.Service
 }
 
-func SetupProductHandler(pService product.ProductService) *productHandler {
-	if pService == nil {
-		panic("Product service is nil")
+func SetupProductHandler(pVService product.Service) *productHandler {
+	if pVService == nil {
+		panic("Product view is nil")
 	}
 	return &productHandler{
-		pService: pService,
+		pView: pVService,
 	}
 }
 
 func (h *productHandler) GetAll(e echo.Context) error {
 	appContext := context.ParseApplicationContext(e)
 
-	res, err := h.pService.GetProduct(&e)
+	res, err := h.pView.GetAll(appContext, &product.CreateProductRequest{})
 	if err != nil {
 		return appContext.FailWithData(err, res)
 	}
