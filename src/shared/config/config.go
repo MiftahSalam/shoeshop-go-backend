@@ -25,6 +25,9 @@ type Application struct {
 	GQLHttpPort       int64  `json:"gql_http_port"`
 	EnableMonitoring  bool   `json:"enable_monitoring"`
 	MonitoringAddress string `json:"monitoring_address"`
+	Options           struct {
+		SkipGqlReqBodyLog bool `json:"skip_gql_req_body_log"`
+	}
 }
 
 func New(target interface{}) error {

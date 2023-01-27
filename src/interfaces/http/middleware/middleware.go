@@ -10,7 +10,7 @@ import (
 )
 
 func SetupMiddleware(e *echo.Echo, di *di.DI) {
-	contextInjector, _ := NewContextInjectorMiddleware(di.Logger)
+	contextInjector, _ := NewContextInjectorMiddleware(di.Logger, di.Configuration)
 
 	e.Use(contextInjector.Injector)
 

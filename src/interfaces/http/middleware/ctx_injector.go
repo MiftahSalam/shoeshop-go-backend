@@ -9,6 +9,7 @@ import (
 
 	"shoeshop-backend/src/infrastructure/logger"
 	"shoeshop-backend/src/interfaces/http/context"
+	"shoeshop-backend/src/shared/config"
 )
 
 const (
@@ -24,6 +25,7 @@ type (
 
 	contextInjectorMiddleware struct {
 		logger logger.Logger
+		cfg    *config.Configuration
 	}
 )
 
@@ -49,12 +51,17 @@ func (i *contextInjectorMiddleware) Injector(h echo.HandlerFunc) echo.HandlerFun
 		c.Set("RequestTime", time.Now())
 		c.Set("AppContext", appCtx)
 
+		url := c.Request().URL.String()
+		if url == "/graphql" && i.cfg.Application.Options.SkipGqlReqBodyLog {
+			bodyBytes = []byte("GQL Req Skipped")
+		}
+
 		if !i.skipper(c) {
 			i.logger.Info("Incoming",
-				logger.ToField("url", c.Request().URL.String()),
-				logger.ToField("header", c.Request().Header),
-				logger.ToField("request", string(bodyBytes)),
-				logger.ToField("rid", rid))
+				logger.ToField("url:", c.Request().URL.String()),
+				logger.ToField("header:", c.Request().Header),
+				logger.ToField("request:", string(bodyBytes)),
+				logger.ToField("rid:", rid))
 		}
 
 		return h(c)
@@ -71,6 +78,6 @@ func (i *contextInjectorMiddleware) skipper(c echo.Context) (skip bool) {
 	return
 }
 
-func NewContextInjectorMiddleware(logger logger.Logger) (ContextInjectorMiddleware, error) {
-	return &contextInjectorMiddleware{logger: logger}, nil
+func NewContextInjectorMiddleware(logger logger.Logger, cfg *config.Configuration) (ContextInjectorMiddleware, error) {
+	return &contextInjectorMiddleware{logger: logger, cfg: cfg}, nil
 }
