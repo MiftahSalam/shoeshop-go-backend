@@ -1,4 +1,4 @@
-package http
+package rest
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"shoeshop-backend/src/interfaces/http/interceptor"
 )
 
-func setupRouter(e *echo.Echo, handler *handler, interceptor *interceptor.Interceptor) {
+func SetupRouter(e *echo.Echo, handler *handler, interceptor *interceptor.Interceptor) {
 	e.GET("", func(e echo.Context) error {
 		return e.JSON(http.StatusNotFound, "")
 	})

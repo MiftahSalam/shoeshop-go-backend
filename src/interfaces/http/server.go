@@ -8,6 +8,7 @@ import (
 
 	"shoeshop-backend/src/di"
 	"shoeshop-backend/src/interfaces/http/middleware"
+	"shoeshop-backend/src/interfaces/http/rest"
 )
 
 func Start(di *di.DI) {
@@ -17,7 +18,7 @@ func Start(di *di.DI) {
 	middleware.SetupMiddleware(server, di)
 	middleware.SetupMiddleware(gqlServer, di)
 
-	setupRouter(server, setupHandler(di), di.Interceptor)
+	rest.SetupRouter(server, rest.SetupHandler(di), di.Interceptor)
 	setupGQL(gqlServer, di.Interceptor)
 
 	errs := errgroup.Group{}
