@@ -1,0 +1,17 @@
+type Product {
+  name: String!
+  description: String
+  imageUrl: String
+  rating: Int!
+  price: Float!
+  numReviews: Int!
+  countInStock: Int!
+  reviews: [Review!]
+}
+
+type Review {
+  name: String!
+  rating: Int!
+  comment: String!
+  user: User!
+}

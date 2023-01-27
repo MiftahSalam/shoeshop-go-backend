@@ -22,6 +22,7 @@ type Application struct {
 	Name              string `json:"name"`
 	Hostname          string `json:"hostname"`
 	HttpPort          int64  `json:"http_port"`
+	GQLHttpPort       int64  `json:"gql_http_port"`
 	EnableMonitoring  bool   `json:"enable_monitoring"`
 	MonitoringAddress string `json:"monitoring_address"`
 }
@@ -55,6 +56,10 @@ func New(target interface{}) error {
 
 func (c *Configuration) HttpPort() string {
 	return fmt.Sprintf(":%v", c.Application.HttpPort)
+}
+
+func (c *Configuration) GQLHttpPort() string {
+	return fmt.Sprintf(":%v", c.Application.GQLHttpPort)
 }
 
 func Setup() *Configuration {

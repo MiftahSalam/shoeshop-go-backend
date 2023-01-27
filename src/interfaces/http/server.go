@@ -1,7 +1,10 @@
 package http
 
 import (
+	"fmt"
+
 	"github.com/labstack/echo/v4"
+	"golang.org/x/sync/errgroup"
 
 	"shoeshop-backend/src/di"
 	"shoeshop-backend/src/interfaces/http/middleware"
@@ -9,11 +12,31 @@ import (
 
 func Start(di *di.DI) {
 	server := echo.New()
+	gqlServer := echo.New()
 
 	middleware.SetupMiddleware(server, di)
-	setupRouter(server, setupHandler(di), di.Interceptor)
+	middleware.SetupMiddleware(gqlServer, di)
 
-	if err := server.Start(di.Configuration.HttpPort()); err != nil {
-		panic(err)
+	setupRouter(server, setupHandler(di), di.Interceptor)
+	setupGQL(gqlServer, di.Interceptor)
+
+	errs := errgroup.Group{}
+
+	errs.Go(func() error {
+		if err := server.Start(di.Configuration.HttpPort()); err != nil {
+			panic(err)
+		}
+		return nil
+	})
+
+	errs.Go(func() error {
+		if err := gqlServer.Start(di.Configuration.GQLHttpPort()); err != nil {
+			panic(err)
+		}
+		return nil
+	})
+
+	if err := errs.Wait(); err != nil {
+		fmt.Println(err)
 	}
 }

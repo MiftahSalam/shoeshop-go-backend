@@ -1,0 +1,9 @@
+schema {
+  query: ProductQuery
+}
+
+type ProductQuery {
+  getList: [Product!]
+}
+
+scalar Time
