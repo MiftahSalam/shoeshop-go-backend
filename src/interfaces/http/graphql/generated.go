@@ -38,7 +38,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
-	ProductQuery() ProductQueryResolver
+	Query() QueryResolver
 }
 
 type DirectiveRoot struct {
@@ -57,8 +57,9 @@ type ComplexityRoot struct {
 		Reviews      func(childComplexity int) int
 	}
 
-	ProductQuery struct {
-		GetList func(childComplexity int) int
+	Query struct {
+		GetProduct  func(childComplexity int, id string) int
+		GetProducts func(childComplexity int) int
 	}
 
 	Review struct {
@@ -76,8 +77,9 @@ type ComplexityRoot struct {
 	}
 }
 
-type ProductQueryResolver interface {
-	GetList(ctx context.Context) ([]*product.Product, error)
+type QueryResolver interface {
+	GetProducts(ctx context.Context) ([]*product.Product, error)
+	GetProduct(ctx context.Context, id string) (*product.Product, error)
 }
 
 type executableSchema struct {
@@ -158,12 +160,24 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Product.Reviews(childComplexity), true
 
-	case "ProductQuery.getList":
-		if e.complexity.ProductQuery.GetList == nil {
+	case "Query.getProduct":
+		if e.complexity.Query.GetProduct == nil {
 			break
 		}
 
-		return e.complexity.ProductQuery.GetList(childComplexity), true
+		args, err := ec.field_Query_getProduct_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetProduct(childComplexity, args["id"].(string)), true
+
+	case "Query.getProducts":
+		if e.complexity.Query.GetProducts == nil {
+			break
+		}
+
+		return e.complexity.Query.GetProducts(childComplexity), true
 
 	case "Review.comment":
 		if e.complexity.Review.Comment == nil {
@@ -239,7 +253,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			}
 			first = false
 			ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
-			data := ec._ProductQuery(ctx, rc.Operation.SelectionSet)
+			data := ec._Query(ctx, rc.Operation.SelectionSet)
 			var buf bytes.Buffer
 			data.MarshalGQL(&buf)
 
@@ -294,7 +308,7 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_ProductQuery___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -306,6 +320,21 @@ func (ec *executionContext) field_ProductQuery___type_args(ctx context.Context, 
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getProduct_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -744,8 +773,8 @@ func (ec *executionContext) fieldContext_Product_reviews(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _ProductQuery_getList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProductQuery_getList(ctx, field)
+func (ec *executionContext) _Query_getProducts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getProducts(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -758,7 +787,7 @@ func (ec *executionContext) _ProductQuery_getList(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ProductQuery().GetList(rctx)
+		return ec.resolvers.Query().GetProducts(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -771,9 +800,9 @@ func (ec *executionContext) _ProductQuery_getList(ctx context.Context, field gra
 	return ec.marshalOProduct2ᚕᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐProductᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProductQuery_getList(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_getProducts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProductQuery",
+		Object:     "Query",
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: true,
@@ -804,8 +833,79 @@ func (ec *executionContext) fieldContext_ProductQuery_getList(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _ProductQuery___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProductQuery___type(ctx, field)
+func (ec *executionContext) _Query_getProduct(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getProduct(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetProduct(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*product.Product)
+	fc.Result = res
+	return ec.marshalOProduct2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐProduct(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getProduct(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Product_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Product_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Product_description(ctx, field)
+			case "imageUrl":
+				return ec.fieldContext_Product_imageUrl(ctx, field)
+			case "rating":
+				return ec.fieldContext_Product_rating(ctx, field)
+			case "price":
+				return ec.fieldContext_Product_price(ctx, field)
+			case "numReviews":
+				return ec.fieldContext_Product_numReviews(ctx, field)
+			case "countInStock":
+				return ec.fieldContext_Product_countInStock(ctx, field)
+			case "reviews":
+				return ec.fieldContext_Product_reviews(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Product", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getProduct_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query___type(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -831,9 +931,9 @@ func (ec *executionContext) _ProductQuery___type(ctx context.Context, field grap
 	return ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProductQuery___type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProductQuery",
+		Object:     "Query",
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: false,
@@ -870,15 +970,15 @@ func (ec *executionContext) fieldContext_ProductQuery___type(ctx context.Context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_ProductQuery___type_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query___type_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _ProductQuery___schema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProductQuery___schema(ctx, field)
+func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query___schema(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -904,9 +1004,9 @@ func (ec *executionContext) _ProductQuery___schema(ctx context.Context, field gr
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProductQuery___schema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProductQuery",
+		Object:     "Query",
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: false,
@@ -3146,12 +3246,12 @@ func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
-var productQueryImplementors = []string{"ProductQuery"}
+var queryImplementors = []string{"Query"}
 
-func (ec *executionContext) _ProductQuery(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, productQueryImplementors)
+func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, queryImplementors)
 	ctx = graphql.WithFieldContext(ctx, &graphql.FieldContext{
-		Object: "ProductQuery",
+		Object: "Query",
 	})
 
 	out := graphql.NewFieldSet(fields)
@@ -3163,8 +3263,8 @@ func (ec *executionContext) _ProductQuery(ctx context.Context, sel ast.Selection
 
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("ProductQuery")
-		case "getList":
+			out.Values[i] = graphql.MarshalString("Query")
+		case "getProducts":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3173,7 +3273,27 @@ func (ec *executionContext) _ProductQuery(ctx context.Context, sel ast.Selection
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._ProductQuery_getList(ctx, field)
+				res = ec._Query_getProducts(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "getProduct":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getProduct(ctx, field)
 				return res
 			}
 
@@ -3187,13 +3307,13 @@ func (ec *executionContext) _ProductQuery(ctx context.Context, sel ast.Selection
 		case "__type":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._ProductQuery___type(ctx, field)
+				return ec._Query___type(ctx, field)
 			})
 
 		case "__schema":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._ProductQuery___schema(ctx, field)
+				return ec._Query___schema(ctx, field)
 			})
 
 		default:
@@ -4046,6 +4166,13 @@ func (ec *executionContext) marshalOProduct2ᚕᚖshoeshopᚑbackendᚋsrcᚋint
 	}
 
 	return ret
+}
+
+func (ec *executionContext) marshalOProduct2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐProduct(ctx context.Context, sel ast.SelectionSet, v *product.Product) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Product(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOReview2ᚕᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐReviewᚄ(ctx context.Context, sel ast.SelectionSet, v []*product.Review) graphql.Marshaler {

@@ -1,9 +1,10 @@
 schema {
-  query: ProductQuery
+  query: Query
 }
 
-type ProductQuery {
-  getList: [Product!]
+type Query {
+  getProducts: [Product!]
+  getProduct(id: ID!): Product
 }
 
 scalar Time

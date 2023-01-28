@@ -8,6 +8,8 @@ import (
 type (
 	Service interface {
 		GetProducts(ctx *context.ApplicationContext) (products []*ProductResponse, err error)
+		GetProduct(ctx *context.ApplicationContext, id string) (product *ProductResponse, err error)
+		Migrate()
 	}
 
 	service struct {

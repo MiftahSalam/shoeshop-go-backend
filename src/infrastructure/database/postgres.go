@@ -52,6 +52,10 @@ func (d *postgresqldb) Begin() ORM {
 	return &postgresqldb{db, err}
 }
 
+func (d *postgresqldb) Migrate(object interface{}) error {
+	return d.db.AutoMigrate(object)
+}
+
 func (d *postgresqldb) Commit() error {
 	return d.db.Commit().Error
 }

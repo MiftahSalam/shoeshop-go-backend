@@ -12,14 +12,34 @@ import (
 	"shoeshop-backend/src/interfaces/http/view/product"
 )
 
-// GetList is the resolver for the getList field.
-func (r *productQueryResolver) GetList(ctx context.Context) ([]*product.Product, error) {
+// GetProducts is the resolver for the getProducts field.
+func (r *queryResolver) GetProducts(ctx context.Context) ([]*product.Product, error) {
 	appContext := ctxApp.GetAppCtxFromContext(ctx)
 
 	return r.productView.GetAll(appContext)
 }
 
-// ProductQuery returns graph.ProductQueryResolver implementation.
-func (r *Resolver) ProductQuery() graph.ProductQueryResolver { return &productQueryResolver{r} }
+// GetProduct is the resolver for the getProduct field.
+func (r *queryResolver) GetProduct(ctx context.Context, id string) (*product.Product, error) {
+	appContext := ctxApp.GetAppCtxFromContext(ctx)
 
-type productQueryResolver struct{ *Resolver }
+	return r.productView.GetById(appContext, id)
+}
+
+// Query returns graph.QueryResolver implementation.
+func (r *Resolver) Query() graph.QueryResolver { return &queryResolver{r} }
+
+type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *queryResolver) GetList(ctx context.Context) ([]*product.Product, error) {
+	appContext := ctxApp.GetAppCtxFromContext(ctx)
+
+	return r.productView.GetAll(appContext)
+
+}

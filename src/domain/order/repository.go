@@ -1,4 +1,4 @@
-package user
+package order
 
 type Repository interface {
 	AutoMigrate()

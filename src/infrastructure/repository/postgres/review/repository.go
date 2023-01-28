@@ -1,9 +1,9 @@
-package user
+package review
 
 import (
 	"fmt"
 
-	"shoeshop-backend/src/domain/user"
+	"shoeshop-backend/src/domain/review"
 	"shoeshop-backend/src/infrastructure/database"
 )
 
@@ -12,7 +12,7 @@ type repo struct {
 	slave  database.ORM
 }
 
-func NewRepository(master database.ORM, slave database.ORM) user.Repository {
+func NewRepository(master database.ORM, slave database.ORM) review.Repository {
 	if master == nil {
 		panic("please provide sql DB")
 	}
@@ -23,8 +23,8 @@ func NewRepository(master database.ORM, slave database.ORM) user.Repository {
 }
 
 func (r *repo) AutoMigrate() {
-	err := r.master.Migrate(&user.User{})
+	err := r.master.Migrate(&review.Review{})
 	if err != nil {
-		fmt.Println("error auto migrate user domain with error:", err)
+		fmt.Println("error auto migrate review domain with error:", err)
 	}
 }

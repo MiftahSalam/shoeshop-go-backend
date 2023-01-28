@@ -9,6 +9,7 @@ type (
 	Service interface {
 		GetAllTest(ctx *context.ApplicationContext, request *CreateProductRequest) ([]*ProductResponse, error)
 		GetAll(ctx *context.ApplicationContext) ([]*Product, error)
+		GetById(ctx *context.ApplicationContext, id string) (*Product, error)
 	}
 
 	service struct {
@@ -38,5 +39,14 @@ func (s *service) GetAll(ctx *context.ApplicationContext) (out []*Product, err e
 		return
 	}
 	out = ToProductsResponse(res)
+	return
+}
+
+func (s *service) GetById(ctx *context.ApplicationContext, id string) (out *Product, err error) {
+	res, err := s.pUC.GetProduct(ctx, id)
+	if err != nil {
+		return
+	}
+	out = toProductResponse(res)
 	return
 }

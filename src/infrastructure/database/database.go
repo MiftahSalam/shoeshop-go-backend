@@ -45,6 +45,7 @@ type ORM interface {
 	Association(column string) ORMAssociation
 	Or(query interface{}, args ...interface{}) ORM
 	Save(data interface{}) error
+	Migrate(data interface{}) error
 }
 
 type ORMAssociation interface {

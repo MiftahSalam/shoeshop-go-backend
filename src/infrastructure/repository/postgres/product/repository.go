@@ -1,6 +1,8 @@
 package product
 
 import (
+	"fmt"
+
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
@@ -25,6 +27,13 @@ func NewRepository(master database.ORM, slave database.ORM) product.Repository {
 	return &repo{master: master, slave: slave}
 }
 
+func (r *repo) AutoMigrate() {
+	err := r.master.Migrate(&product.Product{})
+	if err != nil {
+		fmt.Println("error auto migrate product domain with error:", err)
+	}
+}
+
 func (r *repo) GetAll(ctx *context.ApplicationContext) (products []*product.Product, err error) {
 	err = r.slave.Find(&products)
 	if err == nil {
@@ -37,4 +46,18 @@ func (r *repo) GetAll(ctx *context.ApplicationContext) (products []*product.Prod
 	}
 
 	return products, constant.ErrorInternalServer
+}
+
+func (r *repo) GetById(ctx *context.ApplicationContext, id string) (product *product.Product, err error) {
+	err = r.slave.Where("id = ?", id).First(&product)
+	if err == nil {
+		return
+	}
+
+	ctx.Logger.Error("failed product.GetById:" + err.Error())
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return product, constant.ErrorDataNotFound
+	}
+
+	return product, constant.ErrorInternalServer
 }

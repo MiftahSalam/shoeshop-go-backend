@@ -13,4 +13,5 @@ type Option struct {
 	MaxOpenConnections int           `json:"max_open_connections" mapstructure:"max_open_connections"`
 	ConnMaxLifetime    time.Duration `json:"conn_max_lifetime" json:"conn_max_lifetime"`
 	DebugMode          bool          `json:"debug_mode" mapstructure:"debug_mode"`
+	AutoMigrate        bool          `json:"auto_migrate" mapstructure:"auto_migrate"`
 }
