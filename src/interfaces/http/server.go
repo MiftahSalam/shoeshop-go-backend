@@ -19,7 +19,7 @@ func Start(di *di.DI) {
 	middleware.SetupMiddleware(gqlServer, di)
 
 	rest.SetupRouter(server, rest.SetupHandler(di), di.Interceptor)
-	setupGQL(gqlServer, di.Interceptor)
+	setupGQL(gqlServer, di.Interceptor, di)
 
 	errs := errgroup.Group{}
 

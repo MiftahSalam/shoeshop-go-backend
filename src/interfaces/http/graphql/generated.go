@@ -8,7 +8,8 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"shoeshop-backend/src/interfaces/http/graphql/model"
+	"shoeshop-backend/src/interfaces/http/view/product"
+	"shoeshop-backend/src/interfaces/http/view/user"
 	"strconv"
 	"sync"
 	"time"
@@ -47,6 +48,7 @@ type ComplexityRoot struct {
 	Product struct {
 		CountInStock func(childComplexity int) int
 		Description  func(childComplexity int) int
+		ID           func(childComplexity int) int
 		ImageURL     func(childComplexity int) int
 		Name         func(childComplexity int) int
 		NumReviews   func(childComplexity int) int
@@ -75,7 +77,7 @@ type ComplexityRoot struct {
 }
 
 type ProductQueryResolver interface {
-	GetList(ctx context.Context) ([]*model.Product, error)
+	GetList(ctx context.Context) ([]*product.Product, error)
 }
 
 type executableSchema struct {
@@ -106,6 +108,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Product.Description(childComplexity), true
+
+	case "Product.id":
+		if e.complexity.Product.ID == nil {
+			break
+		}
+
+		return e.complexity.Product.ID(childComplexity), true
 
 	case "Product.imageUrl":
 		if e.complexity.Product.ImageURL == nil {
@@ -338,7 +347,51 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _Product_name(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_id(ctx context.Context, field graphql.CollectedField, obj *product.Product) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Product_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Product_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Product",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Product_name(ctx context.Context, field graphql.CollectedField, obj *product.Product) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Product_name(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -382,7 +435,7 @@ func (ec *executionContext) fieldContext_Product_name(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Product_description(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_description(ctx context.Context, field graphql.CollectedField, obj *product.Product) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Product_description(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -423,7 +476,7 @@ func (ec *executionContext) fieldContext_Product_description(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Product_imageUrl(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_imageUrl(ctx context.Context, field graphql.CollectedField, obj *product.Product) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Product_imageUrl(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -464,7 +517,7 @@ func (ec *executionContext) fieldContext_Product_imageUrl(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _Product_rating(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_rating(ctx context.Context, field graphql.CollectedField, obj *product.Product) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Product_rating(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -508,7 +561,7 @@ func (ec *executionContext) fieldContext_Product_rating(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Product_price(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_price(ctx context.Context, field graphql.CollectedField, obj *product.Product) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Product_price(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -552,7 +605,7 @@ func (ec *executionContext) fieldContext_Product_price(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Product_numReviews(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_numReviews(ctx context.Context, field graphql.CollectedField, obj *product.Product) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Product_numReviews(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -596,7 +649,7 @@ func (ec *executionContext) fieldContext_Product_numReviews(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _Product_countInStock(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_countInStock(ctx context.Context, field graphql.CollectedField, obj *product.Product) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Product_countInStock(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -640,7 +693,7 @@ func (ec *executionContext) fieldContext_Product_countInStock(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Product_reviews(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_reviews(ctx context.Context, field graphql.CollectedField, obj *product.Product) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Product_reviews(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -663,9 +716,9 @@ func (ec *executionContext) _Product_reviews(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Review)
+	res := resTmp.([]*product.Review)
 	fc.Result = res
-	return ec.marshalOReview2ᚕᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋgraphqlᚋmodelᚐReviewᚄ(ctx, field.Selections, res)
+	return ec.marshalOReview2ᚕᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐReviewᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Product_reviews(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -713,9 +766,9 @@ func (ec *executionContext) _ProductQuery_getList(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Product)
+	res := resTmp.([]*product.Product)
 	fc.Result = res
-	return ec.marshalOProduct2ᚕᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋgraphqlᚋmodelᚐProductᚄ(ctx, field.Selections, res)
+	return ec.marshalOProduct2ᚕᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐProductᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ProductQuery_getList(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -726,6 +779,8 @@ func (ec *executionContext) fieldContext_ProductQuery_getList(ctx context.Contex
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_Product_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Product_name(ctx, field)
 			case "description":
@@ -876,7 +931,7 @@ func (ec *executionContext) fieldContext_ProductQuery___schema(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Review_name(ctx context.Context, field graphql.CollectedField, obj *model.Review) (ret graphql.Marshaler) {
+func (ec *executionContext) _Review_name(ctx context.Context, field graphql.CollectedField, obj *product.Review) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Review_name(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -920,7 +975,7 @@ func (ec *executionContext) fieldContext_Review_name(ctx context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Review_rating(ctx context.Context, field graphql.CollectedField, obj *model.Review) (ret graphql.Marshaler) {
+func (ec *executionContext) _Review_rating(ctx context.Context, field graphql.CollectedField, obj *product.Review) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Review_rating(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -964,7 +1019,7 @@ func (ec *executionContext) fieldContext_Review_rating(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Review_comment(ctx context.Context, field graphql.CollectedField, obj *model.Review) (ret graphql.Marshaler) {
+func (ec *executionContext) _Review_comment(ctx context.Context, field graphql.CollectedField, obj *product.Review) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Review_comment(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1008,7 +1063,7 @@ func (ec *executionContext) fieldContext_Review_comment(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Review_user(ctx context.Context, field graphql.CollectedField, obj *model.Review) (ret graphql.Marshaler) {
+func (ec *executionContext) _Review_user(ctx context.Context, field graphql.CollectedField, obj *product.Review) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Review_user(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1034,9 +1089,9 @@ func (ec *executionContext) _Review_user(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.User)
+	res := resTmp.(*user.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋgraphqlᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋuserᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Review_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1062,7 +1117,7 @@ func (ec *executionContext) fieldContext_Review_user(ctx context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _User_name(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_name(ctx context.Context, field graphql.CollectedField, obj *user.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_name(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1106,7 +1161,7 @@ func (ec *executionContext) fieldContext_User_name(ctx context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _User_email(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_email(ctx context.Context, field graphql.CollectedField, obj *user.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_email(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1150,7 +1205,7 @@ func (ec *executionContext) fieldContext_User_email(ctx context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _User_isAdmin(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_isAdmin(ctx context.Context, field graphql.CollectedField, obj *user.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_isAdmin(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1194,7 +1249,7 @@ func (ec *executionContext) fieldContext_User_isAdmin(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *user.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -3018,7 +3073,7 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 var productImplementors = []string{"Product"}
 
-func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, obj *model.Product) graphql.Marshaler {
+func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, obj *product.Product) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, productImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -3026,6 +3081,13 @@ func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, 
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Product")
+		case "id":
+
+			out.Values[i] = ec._Product_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "name":
 
 			out.Values[i] = ec._Product_name(ctx, field, obj)
@@ -3144,7 +3206,7 @@ func (ec *executionContext) _ProductQuery(ctx context.Context, sel ast.Selection
 
 var reviewImplementors = []string{"Review"}
 
-func (ec *executionContext) _Review(ctx context.Context, sel ast.SelectionSet, obj *model.Review) graphql.Marshaler {
+func (ec *executionContext) _Review(ctx context.Context, sel ast.SelectionSet, obj *product.Review) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, reviewImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -3193,7 +3255,7 @@ func (ec *executionContext) _Review(ctx context.Context, sel ast.SelectionSet, o
 
 var userImplementors = []string{"User"}
 
-func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *model.User) graphql.Marshaler {
+func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *user.User) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, userImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -3585,6 +3647,21 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 	return graphql.WrapContextMarshaler(ctx, res)
 }
 
+func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
+	res, err := graphql.UnmarshalID(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := graphql.MarshalID(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
 	res, err := graphql.UnmarshalInt(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3600,7 +3677,7 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNProduct2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋgraphqlᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v *model.Product) graphql.Marshaler {
+func (ec *executionContext) marshalNProduct2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐProduct(ctx context.Context, sel ast.SelectionSet, v *product.Product) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -3610,7 +3687,7 @@ func (ec *executionContext) marshalNProduct2ᚖshoeshopᚑbackendᚋsrcᚋinterf
 	return ec._Product(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNReview2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋgraphqlᚋmodelᚐReview(ctx context.Context, sel ast.SelectionSet, v *model.Review) graphql.Marshaler {
+func (ec *executionContext) marshalNReview2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐReview(ctx context.Context, sel ast.SelectionSet, v *product.Review) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -3635,7 +3712,7 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNUser2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋgraphqlᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋuserᚐUser(ctx context.Context, sel ast.SelectionSet, v *user.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -3924,7 +4001,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOProduct2ᚕᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋgraphqlᚋmodelᚐProductᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Product) graphql.Marshaler {
+func (ec *executionContext) marshalOProduct2ᚕᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐProductᚄ(ctx context.Context, sel ast.SelectionSet, v []*product.Product) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -3951,7 +4028,7 @@ func (ec *executionContext) marshalOProduct2ᚕᚖshoeshopᚑbackendᚋsrcᚋint
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNProduct2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋgraphqlᚋmodelᚐProduct(ctx, sel, v[i])
+			ret[i] = ec.marshalNProduct2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐProduct(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3971,7 +4048,7 @@ func (ec *executionContext) marshalOProduct2ᚕᚖshoeshopᚑbackendᚋsrcᚋint
 	return ret
 }
 
-func (ec *executionContext) marshalOReview2ᚕᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋgraphqlᚋmodelᚐReviewᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Review) graphql.Marshaler {
+func (ec *executionContext) marshalOReview2ᚕᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐReviewᚄ(ctx context.Context, sel ast.SelectionSet, v []*product.Review) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -3998,7 +4075,7 @@ func (ec *executionContext) marshalOReview2ᚕᚖshoeshopᚑbackendᚋsrcᚋinte
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNReview2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋgraphqlᚋmodelᚐReview(ctx, sel, v[i])
+			ret[i] = ec.marshalNReview2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐReview(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)

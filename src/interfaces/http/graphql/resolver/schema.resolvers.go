@@ -6,14 +6,17 @@ package resolver
 
 import (
 	"context"
-	"fmt"
+
+	ctxApp "shoeshop-backend/src/interfaces/http/context"
 	graph "shoeshop-backend/src/interfaces/http/graphql"
-	"shoeshop-backend/src/interfaces/http/graphql/model"
+	"shoeshop-backend/src/interfaces/http/view/product"
 )
 
 // GetList is the resolver for the getList field.
-func (r *productQueryResolver) GetList(ctx context.Context) ([]*model.Product, error) {
-	panic(fmt.Errorf("not implemented: GetList - getList"))
+func (r *productQueryResolver) GetList(ctx context.Context) ([]*product.Product, error) {
+	appContext := ctxApp.GetAppCtxFromContext(ctx)
+
+	return r.productView.GetAll(appContext)
 }
 
 // ProductQuery returns graph.ProductQueryResolver implementation.

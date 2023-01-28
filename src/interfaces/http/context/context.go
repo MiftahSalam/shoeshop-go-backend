@@ -1,6 +1,7 @@
 package context
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -9,6 +10,7 @@ import (
 
 	"shoeshop-backend/src/infrastructure/errors"
 	"shoeshop-backend/src/infrastructure/logger"
+	"shoeshop-backend/src/shared/constant"
 )
 
 type (
@@ -120,7 +122,7 @@ func NewApplicationContext(parent echo.Context, logger logger.Logger) *Applicati
 
 func ParseApplicationContext(c echo.Context) *ApplicationContext {
 	var (
-		nc  = c.Get("AppContext")
+		nc  = c.Get(string(constant.AppCtxName))
 		ctx *ApplicationContext
 	)
 
@@ -129,4 +131,17 @@ func ParseApplicationContext(c echo.Context) *ApplicationContext {
 	ctx = nc.(*ApplicationContext)
 
 	return ctx
+}
+
+func GetAppCtxFromContext(ctx context.Context) *ApplicationContext {
+	var (
+		nc     = ctx.Value(constant.AppCtxName)
+		appCtx *ApplicationContext
+	)
+
+	// request context is mandatory on application context
+	// force casting
+	appCtx = nc.(*ApplicationContext)
+
+	return appCtx
 }

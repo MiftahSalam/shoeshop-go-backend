@@ -10,6 +10,7 @@ import (
 	"shoeshop-backend/src/infrastructure/logger"
 	"shoeshop-backend/src/interfaces/http/context"
 	"shoeshop-backend/src/shared/config"
+	"shoeshop-backend/src/shared/constant"
 )
 
 const (
@@ -49,7 +50,7 @@ func (i *contextInjectorMiddleware) Injector(h echo.HandlerFunc) echo.HandlerFun
 		appCtx := context.NewApplicationContext(c, i.logger)
 
 		c.Set("RequestTime", time.Now())
-		c.Set("AppContext", appCtx)
+		c.Set(string(constant.AppCtxName), appCtx)
 
 		url := c.Request().URL.String()
 		if url == "/graphql" && i.cfg.Application.Options.SkipGqlReqBodyLog {

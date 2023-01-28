@@ -1,6 +1,9 @@
 package product
 
-import "shoeshop-backend/src/usecase/product"
+import (
+	"shoeshop-backend/src/interfaces/http/view/user"
+	"shoeshop-backend/src/usecase/product"
+)
 
 type CreateProductRequest struct {
 }
@@ -14,8 +17,27 @@ type ProductResponse struct {
 	CustomField1 string `json:"custom_field_1"`
 }
 
-func ToProductsResponse(productsResp []*product.ProductResponse) []*ProductResponse {
-	products := []*ProductResponse{}
+type Product struct {
+	ID           string    `json:"id"`
+	Name         string    `json:"name"`
+	Description  *string   `json:"description"`
+	ImageURL     *string   `json:"imageUrl"`
+	Rating       int       `json:"rating"`
+	Price        float64   `json:"price"`
+	NumReviews   int       `json:"numReviews"`
+	CountInStock int       `json:"countInStock"`
+	Reviews      []*Review `json:"reviews"`
+}
+
+type Review struct {
+	Name    string     `json:"name"`
+	Rating  int        `json:"rating"`
+	Comment string     `json:"comment"`
+	User    *user.User `json:"user"`
+}
+
+func ToProductsResponse(productsResp []*product.ProductResponse) []*Product {
+	products := []*Product{}
 	for _, v := range productsResp {
 		products = append(products, toProductResponse(v))
 	}
@@ -25,4 +47,13 @@ func ToProductsResponse(productsResp []*product.ProductResponse) []*ProductRespo
 
 func (r *CreateProductRequest) ToProductUC() *product.ProductRequest {
 	return &product.ProductRequest{}
+}
+
+func ToProductsResponseTest(productsResp []*product.ProductResponse) []*ProductResponse {
+	products := []*ProductResponse{}
+	for _, v := range productsResp {
+		products = append(products, toProductResponseTest(v))
+	}
+
+	return products
 }

@@ -23,7 +23,7 @@ func SetupProductHandler(pVService product.Service) *productHandler {
 func (h *productHandler) GetAll(e echo.Context) error {
 	appContext := context.ParseApplicationContext(e)
 
-	res, err := h.pView.GetAll(appContext, &product.CreateProductRequest{})
+	res, err := h.pView.GetAllTest(appContext, &product.CreateProductRequest{})
 	if err != nil {
 		return appContext.FailWithData(err, res)
 	}

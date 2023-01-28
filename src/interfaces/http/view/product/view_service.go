@@ -7,7 +7,8 @@ import (
 
 type (
 	Service interface {
-		GetAll(ctx *context.ApplicationContext, request *CreateProductRequest) ([]*ProductResponse, error)
+		GetAllTest(ctx *context.ApplicationContext, request *CreateProductRequest) ([]*ProductResponse, error)
+		GetAll(ctx *context.ApplicationContext) ([]*Product, error)
 	}
 
 	service struct {
@@ -22,7 +23,16 @@ func NewService(pUC product.Service) Service {
 	return &service{pUC: pUC}
 }
 
-func (s *service) GetAll(ctx *context.ApplicationContext, request *CreateProductRequest) (out []*ProductResponse, err error) {
+func (s *service) GetAllTest(ctx *context.ApplicationContext, request *CreateProductRequest) (out []*ProductResponse, err error) {
+	res, err := s.pUC.GetProducts(ctx)
+	if err != nil {
+		return
+	}
+	out = ToProductsResponseTest(res)
+	return
+}
+
+func (s *service) GetAll(ctx *context.ApplicationContext) (out []*Product, err error) {
 	res, err := s.pUC.GetProducts(ctx)
 	if err != nil {
 		return
