@@ -6,6 +6,7 @@ type Query {
   getProducts: [Product!]
   getProduct(id: ID!): Product
   login(input: Login!): User!
+  getUserProfile: User!
 }
 
 scalar Time

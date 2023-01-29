@@ -9,6 +9,7 @@ type (
 	Service interface {
 		Migrate()
 		GetByEmail(ctx *context.ApplicationContext, email string) (resp *UserResponse, err error)
+		GetById(ctx *context.ApplicationContext, id string) (resp *UserResponse, err error)
 		LoginUser(ctx *context.ApplicationContext, email, password string) (resp *UserResponse, err error)
 	}
 

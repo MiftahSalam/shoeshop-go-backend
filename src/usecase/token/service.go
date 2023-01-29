@@ -8,6 +8,7 @@ import (
 type (
 	Service interface {
 		Generate(ctx *context.ApplicationContext, userId string) (result string, err error)
+		CheckAuth(ctx *context.ApplicationContext) (userId string, err error)
 	}
 
 	service struct {

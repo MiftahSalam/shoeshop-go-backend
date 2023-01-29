@@ -7,7 +7,8 @@ import (
 
 type (
 	Service interface {
-		GetUser(ctx *context.ApplicationContext, email string) (*User, error)
+		GetUserByEmail(ctx *context.ApplicationContext, email string) (*User, error)
+		GetUserById(ctx *context.ApplicationContext, id string) (*User, error)
 		LoginUser(ctx *context.ApplicationContext, email, password string) (*User, error)
 	}
 
@@ -35,8 +36,19 @@ func (s *service) LoginUser(ctx *context.ApplicationContext, email, password str
 	return
 }
 
-func (s *service) GetUser(ctx *context.ApplicationContext, email string) (out *User, err error) {
+func (s *service) GetUserByEmail(ctx *context.ApplicationContext, email string) (out *User, err error) {
 	res, err := s.uUC.GetByEmail(ctx, email)
+	if err != nil {
+		return
+	}
+
+	out = toUserResponse(res)
+
+	return
+}
+
+func (s *service) GetUserById(ctx *context.ApplicationContext, id string) (out *User, err error) {
+	res, err := s.uUC.GetById(ctx, id)
 	if err != nil {
 		return
 	}

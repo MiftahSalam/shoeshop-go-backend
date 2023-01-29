@@ -19,6 +19,16 @@ func (s *service) LoginUser(ctx *context.ApplicationContext, email, password str
 	return
 }
 
+func (s *service) GetById(ctx *context.ApplicationContext, id string) (resp *UserResponse, err error) {
+	user, err := s.uRepo.GetById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	resp = entityToUserResponse(user)
+	return
+}
+
 func (s *service) GetByEmail(ctx *context.ApplicationContext, email string) (resp *UserResponse, err error) {
 	user, err := s.uRepo.GetByEmail(ctx, email)
 	if err != nil {

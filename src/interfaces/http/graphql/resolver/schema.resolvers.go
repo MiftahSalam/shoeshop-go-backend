@@ -6,7 +6,6 @@ package resolver
 
 import (
 	"context"
-
 	ctxApp "shoeshop-backend/src/interfaces/http/context"
 	graph "shoeshop-backend/src/interfaces/http/graphql"
 	"shoeshop-backend/src/interfaces/http/view/product"
@@ -45,7 +44,23 @@ func (r *queryResolver) Login(ctx context.Context, input user.Login) (*user.User
 	user.Token = token
 
 	return user, nil
+}
 
+// GetUserProfile is the resolver for the getUserProfile field.
+func (r *queryResolver) GetUserProfile(ctx context.Context) (*user.User, error) {
+	appContext := ctxApp.GetAppCtxFromContext(ctx)
+
+	userId, err := r.serviceToken.CheckAuth(appContext)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := r.userView.GetUserById(appContext, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 // Query returns graph.QueryResolver implementation.

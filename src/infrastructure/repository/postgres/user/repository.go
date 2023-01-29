@@ -33,6 +33,20 @@ func (r *repo) GetByEmail(ctx *context.ApplicationContext, email string) (user *
 		return
 	}
 
+	ctx.Logger.Error("failed product.GetByEmail:" + err.Error())
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return user, constant.ErrorDataNotFound
+	}
+
+	return user, constant.ErrorInternalServer
+}
+
+func (r *repo) GetById(ctx *context.ApplicationContext, id string) (user *user.User, err error) {
+	err = r.slave.Where("id = ?", id).First(&user)
+	if err == nil {
+		return
+	}
+
 	ctx.Logger.Error("failed product.GetById:" + err.Error())
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return user, constant.ErrorDataNotFound
