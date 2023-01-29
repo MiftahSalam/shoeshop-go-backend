@@ -26,7 +26,8 @@ type Application struct {
 	EnableMonitoring  bool   `json:"enable_monitoring"`
 	MonitoringAddress string `json:"monitoring_address"`
 	Options           struct {
-		SkipGqlReqBodyLog bool `json:"skip_gql_req_body_log"`
+		SkipGqlReqBodyLog bool   `json:"skip_gql_req_body_log"`
+		JwtSecret         string `json:"jwt_secret"`
 	}
 }
 

@@ -1,6 +1,13 @@
 type User {
+  id: ID!
   name: String!
   email: String!
+  token: String
   isAdmin: Boolean!
   createdAt: Time
+}
+
+input Login {
+  email: String!
+  password: String!
 }

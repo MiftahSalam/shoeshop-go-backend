@@ -10,6 +10,8 @@ import (
 	ctxApp "shoeshop-backend/src/interfaces/http/context"
 	graph "shoeshop-backend/src/interfaces/http/graphql"
 	"shoeshop-backend/src/interfaces/http/view/product"
+	"shoeshop-backend/src/interfaces/http/view/user"
+	"shoeshop-backend/src/shared/constant"
 )
 
 // GetProducts is the resolver for the getProducts field.
@@ -24,6 +26,26 @@ func (r *queryResolver) GetProduct(ctx context.Context, id string) (*product.Pro
 	appContext := ctxApp.GetAppCtxFromContext(ctx)
 
 	return r.productView.GetById(appContext, id)
+}
+
+// Login is the resolver for the login field.
+func (r *queryResolver) Login(ctx context.Context, input user.Login) (*user.User, error) {
+	appContext := ctxApp.GetAppCtxFromContext(ctx)
+
+	user, err := r.userView.LoginUser(appContext, input.Email, input.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := r.serviceToken.Generate(appContext, user.ID)
+	if err != nil {
+		return nil, constant.ErrorInternalServer
+	}
+
+	user.Token = token
+
+	return user, nil
+
 }
 
 // Query returns graph.QueryResolver implementation.
