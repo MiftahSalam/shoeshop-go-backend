@@ -1,5 +1,6 @@
 schema {
   query: Query
+  mutation: Mutation
 }
 
 type Query {
@@ -7,6 +8,10 @@ type Query {
   getProduct(id: ID!): Product
   login(input: Login!): User!
   getUserProfile: User!
+}
+
+type Mutation {
+  userRegister(input: Register!): User
 }
 
 scalar Time

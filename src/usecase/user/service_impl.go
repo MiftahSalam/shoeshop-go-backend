@@ -5,6 +5,24 @@ import (
 	"shoeshop-backend/src/shared/constant"
 )
 
+func (s *service) RegisterUser(ctx *context.ApplicationContext, userInput UserRegister) (resp *UserResponse, err error) {
+	_, err = s.uRepo.GetByEmail(ctx, userInput.Email)
+	if err == nil {
+		return nil, constant.ErrorDataAlreadyExist
+	} else if err != constant.ErrorDataNotFound {
+		return nil, err
+	}
+
+	createUser := userInput.ToUserDomain(ctx)
+	err = s.uRepo.Save(ctx, createUser)
+	if err != nil {
+		return nil, err
+	}
+
+	resp = entityToUserResponse(createUser)
+	return
+}
+
 func (s *service) LoginUser(ctx *context.ApplicationContext, email, password string) (resp *UserResponse, err error) {
 	user, err := s.uRepo.GetByEmail(ctx, email)
 	if err != nil {

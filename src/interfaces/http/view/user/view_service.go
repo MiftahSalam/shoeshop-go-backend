@@ -10,6 +10,7 @@ type (
 		GetUserByEmail(ctx *context.ApplicationContext, email string) (*User, error)
 		GetUserById(ctx *context.ApplicationContext, id string) (*User, error)
 		LoginUser(ctx *context.ApplicationContext, email, password string) (*User, error)
+		RegisterUser(ctx *context.ApplicationContext, userInput Register) (*User, error)
 	}
 
 	service struct {
@@ -23,6 +24,17 @@ func NewService(uUC user.Service) Service {
 	}
 
 	return &service{uUC: uUC}
+}
+
+func (s *service) RegisterUser(ctx *context.ApplicationContext, userInput Register) (out *User, err error) {
+	res, err := s.uUC.RegisterUser(ctx, userInput.ToUserRegister())
+	if err != nil {
+		return
+	}
+
+	out = toUserResponse(res)
+
+	return
 }
 
 func (s *service) LoginUser(ctx *context.ApplicationContext, email, password string) (out *User, err error) {

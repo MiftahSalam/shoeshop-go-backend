@@ -27,13 +27,23 @@ func NewRepository(master database.ORM, slave database.ORM) user.Repository {
 	return &repo{master: master, slave: slave}
 }
 
+func (r *repo) Save(ctx *context.ApplicationContext, userInput *user.User) (err error) {
+	err = r.master.Create(userInput)
+	if err != nil {
+		ctx.Logger.Error("failed user.Save: " + err.Error())
+		return constant.ErrorInternalServer
+	}
+
+	return nil
+}
+
 func (r *repo) GetByEmail(ctx *context.ApplicationContext, email string) (user *user.User, err error) {
 	err = r.slave.Where("email = ?", email).First(&user)
 	if err == nil {
 		return
 	}
 
-	ctx.Logger.Error("failed product.GetByEmail:" + err.Error())
+	ctx.Logger.Error("failed user.GetByEmail:" + err.Error())
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return user, constant.ErrorDataNotFound
 	}
@@ -47,7 +57,7 @@ func (r *repo) GetById(ctx *context.ApplicationContext, id string) (user *user.U
 		return
 	}
 
-	ctx.Logger.Error("failed product.GetById:" + err.Error())
+	ctx.Logger.Error("failed user.GetById:" + err.Error())
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return user, constant.ErrorDataNotFound
 	}

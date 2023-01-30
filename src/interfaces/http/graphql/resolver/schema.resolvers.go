@@ -13,6 +13,25 @@ import (
 	"shoeshop-backend/src/shared/constant"
 )
 
+// UserRegister is the resolver for the userRegister field.
+func (r *mutationResolver) UserRegister(ctx context.Context, input user.Register) (*user.User, error) {
+	appContext := ctxApp.GetAppCtxFromContext(ctx)
+
+	user, err := r.userView.RegisterUser(appContext, input)
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := r.serviceToken.Generate(appContext, user.ID)
+	if err != nil {
+		return nil, constant.ErrorInternalServer
+	}
+
+	user.Token = token
+
+	return user, nil
+}
+
 // GetProducts is the resolver for the getProducts field.
 func (r *queryResolver) GetProducts(ctx context.Context) ([]*product.Product, error) {
 	appContext := ctxApp.GetAppCtxFromContext(ctx)
@@ -63,9 +82,13 @@ func (r *queryResolver) GetUserProfile(ctx context.Context) (*user.User, error) 
 	return user, nil
 }
 
+// Mutation returns graph.MutationResolver implementation.
+func (r *Resolver) Mutation() graph.MutationResolver { return &mutationResolver{r} }
+
 // Query returns graph.QueryResolver implementation.
 func (r *Resolver) Query() graph.QueryResolver { return &queryResolver{r} }
 
+type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 
 // !!! WARNING !!!

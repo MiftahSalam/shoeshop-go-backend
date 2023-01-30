@@ -1,6 +1,9 @@
 package user
 
-import "time"
+import (
+	"shoeshop-backend/src/usecase/user"
+	"time"
+)
 
 type User struct {
 	ID        string     `json:"id"`
@@ -14,4 +17,18 @@ type User struct {
 type Login struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type Register struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (r Register) ToUserRegister() user.UserRegister {
+	return user.UserRegister{
+		Name:     r.Name,
+		Email:    r.Email,
+		Password: r.Password,
+	}
 }

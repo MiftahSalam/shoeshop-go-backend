@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	ErrorDataAlreadyExist = errors.New(http.StatusBadRequest, "4003000", "Error Data Already Exist")
 	ErrorDataNotFound     = errors.New(http.StatusNotFound, "4043000", "Error Data Not Found")
 	ErrorInvalidToken     = errors.New(http.StatusForbidden, "4013000", "Error Token Invalid")
 	ErrorInvalidTokenData = errors.New(http.StatusForbidden, "4013001", "Error Token Data Invalid")

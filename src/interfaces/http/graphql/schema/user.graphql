@@ -11,3 +11,9 @@ input Login {
   email: String!
   password: String!
 }
+
+input Register {
+  name: String!
+  email: String!
+  password: String!
+}
