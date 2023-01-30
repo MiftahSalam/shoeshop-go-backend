@@ -12,6 +12,7 @@ type (
 		GetById(ctx *context.ApplicationContext, id string) (resp *UserResponse, err error)
 		LoginUser(ctx *context.ApplicationContext, email, password string) (resp *UserResponse, err error)
 		RegisterUser(ctx *context.ApplicationContext, userInput UserRegister) (resp *UserResponse, err error)
+		UpdateUser(ctx *context.ApplicationContext, userInput UserUpdate) (resp *UserResponse, err error)
 	}
 
 	service struct {

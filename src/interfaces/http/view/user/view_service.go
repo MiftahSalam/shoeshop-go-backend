@@ -11,6 +11,7 @@ type (
 		GetUserById(ctx *context.ApplicationContext, id string) (*User, error)
 		LoginUser(ctx *context.ApplicationContext, email, password string) (*User, error)
 		RegisterUser(ctx *context.ApplicationContext, userInput Register) (*User, error)
+		UpdateUser(ctx *context.ApplicationContext, id string, userInput UpdateProfile) (*User, error)
 	}
 
 	service struct {
@@ -24,6 +25,17 @@ func NewService(uUC user.Service) Service {
 	}
 
 	return &service{uUC: uUC}
+}
+
+func (s *service) UpdateUser(ctx *context.ApplicationContext, id string, userInput UpdateProfile) (out *User, err error) {
+	res, err := s.uUC.UpdateUser(ctx, userInput.ToUserUpdate(id))
+	if err != nil {
+		return
+	}
+
+	out = toUserResponse(res)
+
+	return
 }
 
 func (s *service) RegisterUser(ctx *context.ApplicationContext, userInput Register) (out *User, err error) {

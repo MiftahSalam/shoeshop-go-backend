@@ -27,6 +27,16 @@ func NewRepository(master database.ORM, slave database.ORM) user.Repository {
 	return &repo{master: master, slave: slave}
 }
 
+func (r *repo) Update(ctx *context.ApplicationContext, userInput *user.User) (err error) {
+	err = r.master.Update(userInput)
+	if err != nil {
+		ctx.Logger.Error("failed user.update: " + err.Error())
+		return constant.ErrorInternalServer
+	}
+
+	return nil
+}
+
 func (r *repo) Save(ctx *context.ApplicationContext, userInput *user.User) (err error) {
 	err = r.master.Create(userInput)
 	if err != nil {

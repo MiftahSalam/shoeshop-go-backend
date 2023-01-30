@@ -32,6 +32,30 @@ func (r *mutationResolver) UserRegister(ctx context.Context, input user.Register
 	return user, nil
 }
 
+// UpdateUserProfile is the resolver for the updateUserProfile field.
+func (r *mutationResolver) UpdateUserProfile(ctx context.Context, input user.UpdateProfile) (*user.User, error) {
+	appContext := ctxApp.GetAppCtxFromContext(ctx)
+
+	userId, err := r.serviceToken.CheckAuth(appContext)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := r.userView.UpdateUser(appContext, userId, input)
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := r.serviceToken.Generate(appContext, user.ID)
+	if err != nil {
+		return nil, constant.ErrorInternalServer
+	}
+
+	user.Token = token
+
+	return user, nil
+}
+
 // GetProducts is the resolver for the getProducts field.
 func (r *queryResolver) GetProducts(ctx context.Context) ([]*product.Product, error) {
 	appContext := ctxApp.GetAppCtxFromContext(ctx)

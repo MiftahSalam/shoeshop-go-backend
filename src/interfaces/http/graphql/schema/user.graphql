@@ -17,3 +17,9 @@ input Register {
   email: String!
   password: String!
 }
+
+input UpdateProfile {
+  name: String
+  email: String
+  password: String
+}
