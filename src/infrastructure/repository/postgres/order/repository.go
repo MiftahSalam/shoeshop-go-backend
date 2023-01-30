@@ -1,10 +1,15 @@
 package order
 
 import (
+	"errors"
 	"fmt"
 
 	"shoeshop-backend/src/domain/order"
 	"shoeshop-backend/src/infrastructure/database"
+	"shoeshop-backend/src/interfaces/http/context"
+	"shoeshop-backend/src/shared/constant"
+
+	"gorm.io/gorm"
 )
 
 type repo struct {
@@ -20,6 +25,30 @@ func NewRepository(master database.ORM, slave database.ORM) order.Repository {
 		panic("please provide sql DB Slave")
 	}
 	return &repo{master: master, slave: slave}
+}
+
+func (r *repo) Save(ctx *context.ApplicationContext, order *order.Order) (err error) {
+	err = r.master.Create(order)
+	if err != nil {
+		ctx.Logger.Error("failed order.Save: " + err.Error())
+		return constant.ErrorInternalServer
+	}
+
+	return nil
+}
+
+func (r *repo) GetById(ctx *context.ApplicationContext, id string) (order *order.Order, err error) {
+	err = r.slave.Where("id = ?", id).First(&order)
+	if err == nil {
+		return
+	}
+
+	ctx.Logger.Error("failed order.GetById:" + err.Error())
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return order, constant.ErrorDataNotFound
+	}
+
+	return order, constant.ErrorInternalServer
 }
 
 func (r *repo) AutoMigrate() {

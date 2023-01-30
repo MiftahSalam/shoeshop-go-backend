@@ -41,7 +41,7 @@ func Setup() *DI {
 	rRepo := rRepository.NewRepository(dbMaster, dbSlave)
 	uRepo := uRepository.NewRepository(dbMaster, dbSlave)
 
-	oService := order.NewService(oRepo)
+	oService := order.NewService(oRepo, pRepo, uRepo)
 	pService := product.NewService(pRepo)
 	rService := review.NewService(rRepo)
 	tService := token.NewService(&cfg.Application)
