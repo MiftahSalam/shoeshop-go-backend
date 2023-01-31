@@ -9,6 +9,16 @@ import (
 	"github.com/google/uuid"
 )
 
+func (s *service) GetOrder(ctx *context.ApplicationContext, orderId string) (resp *OrderResponse, err error) {
+	order, err := s.oRepo.GetById(ctx, orderId)
+	if err != nil {
+		return nil, err
+	}
+
+	resp = entityToOrderResponse(order)
+	return
+}
+
 func (s *service) CreateOrder(ctx *context.ApplicationContext, userId string, orderInput *OrderRequest) (resp *OrderResponse, err error) {
 	user, err := s.uRepo.GetById(ctx, userId)
 	if err != nil {

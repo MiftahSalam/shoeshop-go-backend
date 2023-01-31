@@ -7,6 +7,7 @@ import (
 	rRepository "shoeshop-backend/src/infrastructure/repository/postgres/review"
 	uRepository "shoeshop-backend/src/infrastructure/repository/postgres/user"
 	"shoeshop-backend/src/interfaces/http/interceptor"
+	oView "shoeshop-backend/src/interfaces/http/view/order"
 	pView "shoeshop-backend/src/interfaces/http/view/product"
 	uView "shoeshop-backend/src/interfaces/http/view/user"
 	"shoeshop-backend/src/shared/config"
@@ -25,6 +26,7 @@ type DI struct {
 	TokenService   token.Service
 	Interceptor    *interceptor.Interceptor
 	ProductView    pView.Service
+	OrderView      oView.Service
 	UserView       uView.Service
 }
 
@@ -57,6 +59,7 @@ func Setup() *DI {
 	intercept := interceptor.NewInterceptor()
 
 	vProduct := pView.NewService(pService)
+	vOrder := oView.NewService(oService)
 	vUser := uView.NewService(uService)
 
 	return &DI{
@@ -66,6 +69,7 @@ func Setup() *DI {
 		TokenService:   tService,
 		Interceptor:    intercept,
 		ProductView:    vProduct,
+		OrderView:      vOrder,
 		UserView:       vUser,
 	}
 }

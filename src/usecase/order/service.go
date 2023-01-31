@@ -11,6 +11,7 @@ type (
 	Service interface {
 		Migrate()
 		CreateOrder(ctx *context.ApplicationContext, userId string, orderInput *OrderRequest) (resp *OrderResponse, err error)
+		GetOrder(ctx *context.ApplicationContext, orderId string) (resp *OrderResponse, err error)
 	}
 
 	service struct {

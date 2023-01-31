@@ -6,8 +6,10 @@ package resolver
 
 import (
 	"context"
+
 	ctxApp "shoeshop-backend/src/interfaces/http/context"
 	graph "shoeshop-backend/src/interfaces/http/graphql"
+	"shoeshop-backend/src/interfaces/http/view/order"
 	"shoeshop-backend/src/interfaces/http/view/product"
 	"shoeshop-backend/src/interfaces/http/view/user"
 	"shoeshop-backend/src/shared/constant"
@@ -54,6 +56,23 @@ func (r *mutationResolver) UpdateUserProfile(ctx context.Context, input user.Upd
 	user.Token = token
 
 	return user, nil
+}
+
+// CreateOrder is the resolver for the createOrder field.
+func (r *mutationResolver) CreateOrder(ctx context.Context, input order.OrderInput) (*order.OrderResponse, error) {
+	appContext := ctxApp.GetAppCtxFromContext(ctx)
+
+	userId, err := r.serviceToken.CheckAuth(appContext)
+	if err != nil {
+		return nil, err
+	}
+
+	order, err := r.orderView.CreateOrder(appContext, userId, &input)
+	if err != nil {
+		return nil, err
+	}
+
+	return order, nil
 }
 
 // GetProducts is the resolver for the getProducts field.

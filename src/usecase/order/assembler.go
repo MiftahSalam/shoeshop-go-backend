@@ -1,18 +1,21 @@
 package order
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 
 	"shoeshop-backend/src/domain/order"
 	"shoeshop-backend/src/domain/user"
 	"shoeshop-backend/src/interfaces/http/context"
-	uUC "shoeshop-backend/src/usecase/user"
+	uView "shoeshop-backend/src/interfaces/http/view/user"
+	"shoeshop-backend/src/shared/constant"
 )
 
 func entityToOrderResponse(entity *order.Order) *OrderResponse {
 	return &OrderResponse{
 		ID: entity.ID.String(),
-		User: &uUC.UserResponse{
+		User: &uView.User{
 			ID:        entity.User.ID.String(),
 			Name:      entity.User.Name,
 			Email:     entity.User.Email,
@@ -38,6 +41,7 @@ func itemsDomainToItemsResponse(itemsInput []*order.Item) []*Item {
 	for _, item := range itemsInput {
 		itemResponse := &Item{
 			ProductId: item.ProductId,
+			Product:   item.Product,
 			Name:      item.Name,
 			Quantity:  item.Quantity,
 			Price:     item.Price,
@@ -50,18 +54,21 @@ func itemsDomainToItemsResponse(itemsInput []*order.Item) []*Item {
 
 	return items
 }
+
 func (uR *OrderRequest) ToOrderDomain(ctx *context.ApplicationContext, user *user.User, items []*order.Item) *order.Order {
 	return &order.Order{
 		ID:              uuid.New(),
 		User:            user,
-		UserId:          user.ID.String(),
 		Items:           items,
 		ShippingAddress: order.Shipping(uR.ShippingAddress),
 		PaymentMethod:   uR.PaymentMethod,
-		PaymentStatus:   order.PaymentResult{},
-		TaxPrice:        uR.TaxPrice,
-		ShippingPrice:   uR.ShippingPrice, TotalPrice: uR.TotalPrice,
-		IsPaid:      false,
-		IsDelivered: false,
+		PaymentStatus: order.PaymentResult{
+			Status:     constant.DefaultPaymentStatus,
+			UpdateTime: time.Now(),
+			Email:      "paypal@paypal.com", //temporary
+		},
+		TaxPrice:      uR.TaxPrice,
+		ShippingPrice: uR.ShippingPrice, TotalPrice: uR.TotalPrice,
+		CreatedAt: time.Now(),
 	}
 }

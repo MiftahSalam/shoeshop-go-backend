@@ -45,6 +45,7 @@ resolver:
 autobind:
   - "shoeshop-backend/src/interfaces/http/view/product"
   - "shoeshop-backend/src/interfaces/http/view/user"
+  - "shoeshop-backend/src/interfaces/http/view/order"
 
 # This section declares type mapping between the GraphQL and go type systems
 #

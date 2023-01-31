@@ -13,6 +13,7 @@ type Query {
 type Mutation {
   userRegister(input: Register!): User
   updateUserProfile(input: UpdateProfile!): User
+  createOrder(input: OrderInput!): OrderResponse!
 }
 
 scalar Time

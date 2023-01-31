@@ -16,7 +16,7 @@ import (
 )
 
 func setupGQL(e *echo.Echo, interceptor *interceptor.Interceptor, di *di.DI) {
-	server := gqlHandler.NewDefaultServer(graph.NewExecutableSchema(resolver.NewResolver(di.ProductView, di.UserView, di.TokenService)))
+	server := gqlHandler.NewDefaultServer(graph.NewExecutableSchema(resolver.NewResolver(di.ProductView, di.OrderView, di.UserView, di.TokenService)))
 
 	e.GET("/", func(c echo.Context) error {
 		playground.Handler("Shoeshop", "/graphql").ServeHTTP(c.Response(), c.Request())
