@@ -12,6 +12,15 @@ import (
 	"shoeshop-backend/src/shared/constant"
 )
 
+func entityToOrdersResponse(entities []*order.Order) []*OrderResponse {
+	var orders []*OrderResponse
+	for _, order := range entities {
+		orders = append(orders, entityToOrderResponse(order))
+	}
+
+	return orders
+}
+
 func entityToOrderResponse(entity *order.Order) *OrderResponse {
 	return &OrderResponse{
 		ID: entity.ID.String(),

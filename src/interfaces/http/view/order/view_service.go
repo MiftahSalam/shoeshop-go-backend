@@ -9,6 +9,7 @@ type (
 	Service interface {
 		CreateOrder(ctx *context.ApplicationContext, userId string, order *OrderInput) (*OrderResponse, error)
 		GetOrder(ctx *context.ApplicationContext, orderId string) (*OrderResponse, error)
+		GetOrders(ctx *context.ApplicationContext, userId string) ([]*OrderResponse, error)
 		PayOrder(ctx *context.ApplicationContext, orderId string, payment PaymentResultInput) (*OrderResponse, error)
 	}
 
@@ -42,6 +43,16 @@ func (s *service) CreateOrder(ctx *context.ApplicationContext, userId string, or
 	}
 
 	out = toOrderResponse(resp)
+	return
+}
+
+func (s *service) GetOrders(ctx *context.ApplicationContext, userId string) (out []*OrderResponse, err error) {
+	resp, err := s.oUC.GetOrders(ctx, userId)
+	if err != nil {
+		return
+	}
+
+	out = toOrdersResponse(resp)
 	return
 }
 

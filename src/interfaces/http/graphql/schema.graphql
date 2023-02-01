@@ -9,6 +9,7 @@ type Query {
   login(input: Login!): User!
   getUserProfile: User!
   getOrder(id: ID!): OrderResponse
+  getUserOrders: [OrderResponse!]
 }
 
 type Mutation {

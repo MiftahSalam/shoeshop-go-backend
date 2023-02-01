@@ -12,6 +12,7 @@ type (
 		Migrate()
 		CreateOrder(ctx *context.ApplicationContext, userId string, orderInput *OrderRequest) (resp *OrderResponse, err error)
 		GetOrder(ctx *context.ApplicationContext, orderId string) (resp *OrderResponse, err error)
+		GetOrders(ctx *context.ApplicationContext, userId string) (resp []*OrderResponse, err error)
 		PayOrder(ctx *context.ApplicationContext, orderId string, payment PaymentResult) (resp *OrderResponse, err error)
 	}
 

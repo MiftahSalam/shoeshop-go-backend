@@ -158,6 +158,23 @@ func (r *queryResolver) GetOrder(ctx context.Context, id string) (*order.OrderRe
 	return order, nil
 }
 
+// GetUserOrders is the resolver for the getUserOrders field.
+func (r *queryResolver) GetUserOrders(ctx context.Context) ([]*order.OrderResponse, error) {
+	appContext := ctxApp.GetAppCtxFromContext(ctx)
+
+	userId, err := r.serviceToken.CheckAuth(appContext)
+	if err != nil {
+		return nil, err
+	}
+
+	orders, err := r.orderView.GetOrders(appContext, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return orders, nil
+}
+
 // Mutation returns graph.MutationResolver implementation.
 func (r *Resolver) Mutation() graph.MutationResolver { return &mutationResolver{r} }
 

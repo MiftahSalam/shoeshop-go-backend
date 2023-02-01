@@ -103,6 +103,7 @@ type ComplexityRoot struct {
 		GetOrder       func(childComplexity int, id string) int
 		GetProduct     func(childComplexity int, id string) int
 		GetProducts    func(childComplexity int) int
+		GetUserOrders  func(childComplexity int) int
 		GetUserProfile func(childComplexity int) int
 		Login          func(childComplexity int, input user.Login) int
 	}
@@ -143,6 +144,7 @@ type QueryResolver interface {
 	Login(ctx context.Context, input user.Login) (*user.User, error)
 	GetUserProfile(ctx context.Context) (*user.User, error)
 	GetOrder(ctx context.Context, id string) (*order.OrderResponse, error)
+	GetUserOrders(ctx context.Context) ([]*order.OrderResponse, error)
 }
 
 type executableSchema struct {
@@ -469,6 +471,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetProducts(childComplexity), true
+
+	case "Query.getUserOrders":
+		if e.complexity.Query.GetUserOrders == nil {
+			break
+		}
+
+		return e.complexity.Query.GetUserOrders(childComplexity), true
 
 	case "Query.getUserProfile":
 		if e.complexity.Query.GetUserProfile == nil {
@@ -2994,6 +3003,76 @@ func (ec *executionContext) fieldContext_Query_getOrder(ctx context.Context, fie
 	if fc.Args, err = ec.field_Query_getOrder_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getUserOrders(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getUserOrders(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetUserOrders(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*order.OrderResponse)
+	fc.Result = res
+	return ec.marshalOOrderResponse2ᚕᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋorderᚐOrderResponseᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getUserOrders(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_OrderResponse_id(ctx, field)
+			case "user":
+				return ec.fieldContext_OrderResponse_user(ctx, field)
+			case "items":
+				return ec.fieldContext_OrderResponse_items(ctx, field)
+			case "shippingAddress":
+				return ec.fieldContext_OrderResponse_shippingAddress(ctx, field)
+			case "paymentMethod":
+				return ec.fieldContext_OrderResponse_paymentMethod(ctx, field)
+			case "paymentStatus":
+				return ec.fieldContext_OrderResponse_paymentStatus(ctx, field)
+			case "taxPrice":
+				return ec.fieldContext_OrderResponse_taxPrice(ctx, field)
+			case "shippingPrice":
+				return ec.fieldContext_OrderResponse_shippingPrice(ctx, field)
+			case "totalPrice":
+				return ec.fieldContext_OrderResponse_totalPrice(ctx, field)
+			case "isPaid":
+				return ec.fieldContext_OrderResponse_isPaid(ctx, field)
+			case "paidAt":
+				return ec.fieldContext_OrderResponse_paidAt(ctx, field)
+			case "isDelivered":
+				return ec.fieldContext_OrderResponse_isDelivered(ctx, field)
+			case "deliveredAt":
+				return ec.fieldContext_OrderResponse_deliveredAt(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_OrderResponse_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrderResponse", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -6335,6 +6414,26 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "getUserOrders":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getUserOrders(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "__type":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -7369,6 +7468,53 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOOrderResponse2ᚕᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋorderᚐOrderResponseᚄ(ctx context.Context, sel ast.SelectionSet, v []*order.OrderResponse) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNOrderResponse2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋorderᚐOrderResponse(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalOOrderResponse2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋorderᚐOrderResponse(ctx context.Context, sel ast.SelectionSet, v *order.OrderResponse) graphql.Marshaler {

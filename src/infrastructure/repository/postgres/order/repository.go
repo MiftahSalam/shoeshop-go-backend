@@ -48,6 +48,20 @@ func (r *repo) Save(ctx *context.ApplicationContext, order *order.Order) (err er
 	return nil
 }
 
+func (r *repo) GetByUserId(ctx *context.ApplicationContext, userId string) (order []*order.Order, err error) {
+	err = r.slave.Preload("Items.Product").Preload(clause.Associations).Where("user_id = ?", userId).Find(&order)
+	if err == nil {
+		return
+	}
+
+	ctx.Logger.Error("failed order.GetByUserId:" + err.Error())
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return order, constant.ErrorDataNotFound
+	}
+
+	return order, constant.ErrorInternalServer
+}
+
 func (r *repo) GetById(ctx *context.ApplicationContext, id string) (order *order.Order, err error) {
 	err = r.slave.Preload("Items.Product").Preload(clause.Associations).Where("id = ?", id).First(&order)
 	if err == nil {

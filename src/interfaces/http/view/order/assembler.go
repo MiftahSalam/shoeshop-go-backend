@@ -41,6 +41,15 @@ func (oR *OrderInput) ToOrderRequest() *oUC.OrderRequest {
 	}
 }
 
+func toOrdersResponse(resp []*oUC.OrderResponse) []*OrderResponse {
+	var orders []*OrderResponse
+	for _, order := range resp {
+		orders = append(orders, toOrderResponse(order))
+	}
+
+	return orders
+}
+
 func toOrderResponse(order *oUC.OrderResponse) *OrderResponse {
 	items := []*Item{}
 	for _, item := range order.Items {

@@ -25,6 +25,16 @@ func (s *service) PayOrder(ctx *context.ApplicationContext, orderId string, paym
 	return
 }
 
+func (s *service) GetOrders(ctx *context.ApplicationContext, userId string) (resp []*OrderResponse, err error) {
+	orders, err := s.oRepo.GetByUserId(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	resp = entityToOrdersResponse(orders)
+	return
+}
+
 func (s *service) GetOrder(ctx *context.ApplicationContext, orderId string) (resp *OrderResponse, err error) {
 	order, err := s.oRepo.GetById(ctx, orderId)
 	if err != nil {
