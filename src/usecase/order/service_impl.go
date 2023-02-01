@@ -55,7 +55,7 @@ func (s *service) createItemsDomain(ctx *context.ApplicationContext, orderInput 
 
 		itemDomain := &order.Item{
 			ID:          uuid.New(),
-			Name:        item.Name,
+			Name:        productItem.Name,
 			Quantity:    item.Quantity,
 			Price:       float64(item.Quantity) * productItem.Price,
 			CreatedAt:   time.Now(),

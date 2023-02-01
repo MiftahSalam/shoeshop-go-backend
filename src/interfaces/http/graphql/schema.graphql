@@ -8,6 +8,7 @@ type Query {
   getProduct(id: ID!): Product
   login(input: Login!): User!
   getUserProfile: User!
+  getOrder(id: ID!): OrderResponse
 }
 
 type Mutation {

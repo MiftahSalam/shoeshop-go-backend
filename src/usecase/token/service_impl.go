@@ -35,7 +35,7 @@ func (s *service) Generate(ctx *context.ApplicationContext, userId string) (resu
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims[JWT_USER_KEY] = userId
-	claims["exp"] = time.Now().Add(time.Minute * 2).Unix()
+	claims["exp"] = time.Now().Add(time.Minute * 10).Unix()
 	tokenString, err := token.SignedString([]byte(s.cfg.Options.JwtSecret))
 	if err != nil {
 		ctx.Logger.Error("Generate Token: failed to generate token with error %s", err.Error())

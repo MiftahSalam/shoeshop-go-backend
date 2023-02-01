@@ -17,7 +17,6 @@ type Item struct {
 
 type ItemInput struct {
 	ProductID string  `json:"productId"`
-	Name      string  `json:"name"`
 	Quantity  int     `json:"Quantity"`
 	Price     float64 `json:"Price"`
 }

@@ -42,7 +42,6 @@ func itemsDomainToItemsResponse(itemsInput []*order.Item) []*Item {
 		itemResponse := &Item{
 			ProductId: item.ProductId,
 			Product:   item.Product,
-			Name:      item.Name,
 			Quantity:  item.Quantity,
 			Price:     item.Price,
 			CreatedAt: item.CreatedAt,

@@ -10,6 +10,7 @@ import (
 	"shoeshop-backend/src/shared/constant"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type repo struct {
@@ -38,7 +39,7 @@ func (r *repo) Save(ctx *context.ApplicationContext, order *order.Order) (err er
 }
 
 func (r *repo) GetById(ctx *context.ApplicationContext, id string) (order *order.Order, err error) {
-	err = r.slave.Where("id = ?", id).First(&order)
+	err = r.slave.Preload("Items.Product").Preload(clause.Associations).Where("id = ?", id).First(&order)
 	if err == nil {
 		return
 	}

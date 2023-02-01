@@ -8,6 +8,7 @@ import (
 type (
 	Service interface {
 		CreateOrder(ctx *context.ApplicationContext, userId string, order *OrderInput) (*OrderResponse, error)
+		GetOrder(ctx *context.ApplicationContext, orderId string) (*OrderResponse, error)
 	}
 
 	service struct {
@@ -25,6 +26,16 @@ func NewService(oUC order.Service) Service {
 
 func (s *service) CreateOrder(ctx *context.ApplicationContext, userId string, order *OrderInput) (out *OrderResponse, err error) {
 	resp, err := s.oUC.CreateOrder(ctx, userId, order.ToOrderRequest())
+	if err != nil {
+		return
+	}
+
+	out = toOrderResponse(resp)
+	return
+}
+
+func (s *service) GetOrder(ctx *context.ApplicationContext, orderId string) (out *OrderResponse, err error) {
+	resp, err := s.oUC.GetOrder(ctx, orderId)
 	if err != nil {
 		return
 	}

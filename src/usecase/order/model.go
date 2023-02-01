@@ -35,7 +35,6 @@ type OrderRequest struct {
 type Item struct {
 	Product   *product.Product `json:"product"`
 	ProductId string           `json:"product_id"`
-	Name      string           `json:"name"`
 	Quantity  int              `json:"quantity"`
 	Price     float64          `json:"price"`
 	CreatedAt time.Time        `json:"created_at"`

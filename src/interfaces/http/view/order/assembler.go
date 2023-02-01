@@ -9,7 +9,6 @@ func (oR *OrderInput) ToOrderRequest() *oUC.OrderRequest {
 	items := []*oUC.Item{}
 	for _, item := range oR.Items {
 		itemReq := &oUC.Item{
-			Name:      item.Name,
 			Quantity:  item.Quantity,
 			Price:     item.Price,
 			ProductId: item.ProductID,
@@ -37,7 +36,7 @@ func toOrderResponse(order *oUC.OrderResponse) *OrderResponse {
 	items := []*Item{}
 	for _, item := range order.Items {
 		itemReq := &Item{
-			Name:     item.Name,
+			Name:     item.Product.Name,
 			Quantity: item.Quantity,
 			Price:    item.Price,
 			Product: &product.Product{

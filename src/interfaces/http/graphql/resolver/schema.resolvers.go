@@ -6,7 +6,6 @@ package resolver
 
 import (
 	"context"
-
 	ctxApp "shoeshop-backend/src/interfaces/http/context"
 	graph "shoeshop-backend/src/interfaces/http/graphql"
 	"shoeshop-backend/src/interfaces/http/view/order"
@@ -123,6 +122,23 @@ func (r *queryResolver) GetUserProfile(ctx context.Context) (*user.User, error) 
 	}
 
 	return user, nil
+}
+
+// GetOrder is the resolver for the getOrder field.
+func (r *queryResolver) GetOrder(ctx context.Context, id string) (*order.OrderResponse, error) {
+	appContext := ctxApp.GetAppCtxFromContext(ctx)
+
+	_, err := r.serviceToken.CheckAuth(appContext)
+	if err != nil {
+		return nil, err
+	}
+
+	order, err := r.orderView.GetOrder(appContext, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return order, nil
 }
 
 // Mutation returns graph.MutationResolver implementation.

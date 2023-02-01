@@ -9,7 +9,7 @@ type OrderResponse {
   shippingPrice: Float!
   totalPrice: Float!
   isPaid: Boolean!
-  paidAt: Time!
+  paidAt: Time
   isDelivered: Boolean!
   deliveredAt: Time
   createdAt: Time
@@ -39,7 +39,6 @@ type PaymentResult {
 
 input ItemInput {
   productId: String!
-  name: String!
   Quantity: Int!
   Price: Float!
 }

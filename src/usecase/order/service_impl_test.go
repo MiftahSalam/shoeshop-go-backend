@@ -44,7 +44,6 @@ func TestCreateOrder(t *testing.T) {
 
 	item1 := &order.Item{
 		ProductId: "9b5cd22c-5220-4f42-8fcf-71c5169923b6",
-		Name:      product1.Name,
 		Quantity:  2,
 		Price:     product1.Price,
 		CreatedAt: time.Now(),
@@ -56,7 +55,6 @@ func TestCreateOrder(t *testing.T) {
 
 	item2 := &order.Item{
 		ProductId: "edd5c297-66c9-4e27-908b-cfbdc1801186",
-		Name:      product2.Name,
 		Quantity:  12,
 		Price:     product2.Price,
 		CreatedAt: time.Now(),
