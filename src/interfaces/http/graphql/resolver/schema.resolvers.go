@@ -74,6 +74,23 @@ func (r *mutationResolver) CreateOrder(ctx context.Context, input order.OrderInp
 	return order, nil
 }
 
+// PayOrder is the resolver for the payOrder field.
+func (r *mutationResolver) PayOrder(ctx context.Context, id string, payment order.PaymentResultInput) (*order.OrderResponse, error) {
+	appContext := ctxApp.GetAppCtxFromContext(ctx)
+
+	_, err := r.serviceToken.CheckAuth(appContext)
+	if err != nil {
+		return nil, err
+	}
+
+	order, err := r.orderView.PayOrder(appContext, id, payment)
+	if err != nil {
+		return nil, err
+	}
+
+	return order, nil
+}
+
 // GetProducts is the resolver for the getProducts field.
 func (r *queryResolver) GetProducts(ctx context.Context) ([]*product.Product, error) {
 	appContext := ctxApp.GetAppCtxFromContext(ctx)

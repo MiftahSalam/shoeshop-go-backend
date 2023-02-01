@@ -15,6 +15,7 @@ type Mutation {
   userRegister(input: Register!): User
   updateUserProfile(input: UpdateProfile!): User
   createOrder(input: OrderInput!): OrderResponse!
+  payOrder(id: ID!, payment: PaymentResultInput!): OrderResponse!
 }
 
 scalar Time

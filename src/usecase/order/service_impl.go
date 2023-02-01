@@ -9,6 +9,22 @@ import (
 	"github.com/google/uuid"
 )
 
+func (s *service) PayOrder(ctx *context.ApplicationContext, orderId string, payment PaymentResult) (resp *OrderResponse, err error) {
+	order, err := s.oRepo.GetById(ctx, orderId)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedOrder := s.createUpdatePayment(order, payment)
+	err = s.oRepo.UpdateColumn(ctx, updatedOrder)
+	if err != nil {
+		return nil, err
+	}
+
+	resp = entityToOrderResponse(order)
+	return
+}
+
 func (s *service) GetOrder(ctx *context.ApplicationContext, orderId string) (resp *OrderResponse, err error) {
 	order, err := s.oRepo.GetById(ctx, orderId)
 	if err != nil {
@@ -42,6 +58,25 @@ func (s *service) CreateOrder(ctx *context.ApplicationContext, userId string, or
 
 func (s *service) Migrate() {
 	s.oRepo.AutoMigrate()
+}
+
+func (s *service) createUpdatePayment(orderData *order.Order, payment PaymentResult) *order.Order {
+	orderData.PaymentStatus.ID = payment.ID
+	orderData.PaymentStatus.Status = payment.Status
+	orderData.PaymentStatus.Email = payment.Email
+	orderData.PaymentStatus.UpdateTime = payment.UpdateTime
+
+	return &order.Order{
+		ID:     orderData.ID,
+		IsPaid: true,
+		PaidAt: time.Now(),
+		PaymentStatus: order.PaymentResult{
+			ID:         payment.ID,
+			Status:     payment.Status,
+			Email:      payment.Email,
+			UpdateTime: payment.UpdateTime,
+		},
+	}
 }
 
 func (s *service) createItemsDomain(ctx *context.ApplicationContext, orderInput *OrderRequest) ([]*order.Item, error) {

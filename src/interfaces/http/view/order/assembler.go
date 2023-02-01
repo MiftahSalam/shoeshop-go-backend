@@ -5,6 +5,15 @@ import (
 	oUC "shoeshop-backend/src/usecase/order"
 )
 
+func (pR PaymentResultInput) toOrderPaymentResult() oUC.PaymentResult {
+	return oUC.PaymentResult{
+		ID:         pR.ID,
+		Status:     pR.Status,
+		UpdateTime: pR.UpdateTime,
+		Email:      pR.Email,
+	}
+}
+
 func (oR *OrderInput) ToOrderRequest() *oUC.OrderRequest {
 	items := []*oUC.Item{}
 	for _, item := range oR.Items {
@@ -68,6 +77,7 @@ func toOrderResponse(order *oUC.OrderResponse) *OrderResponse {
 		},
 		PaymentMethod: order.PaymentMethod,
 		PaymentStatus: &PaymentResult{
+			ID:         order.PaymentStatus.ID,
 			Status:     order.PaymentStatus.Status,
 			Email:      order.PaymentStatus.Email,
 			UpdateTime: order.PaymentStatus.UpdateTime,

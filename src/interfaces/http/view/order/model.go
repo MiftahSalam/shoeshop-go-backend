@@ -48,6 +48,14 @@ type OrderResponse struct {
 }
 
 type PaymentResult struct {
+	ID         string    `json:"id"`
+	Status     string    `json:"status"`
+	Email      string    `json:"email"`
+	UpdateTime time.Time `json:"updateTime"`
+}
+
+type PaymentResultInput struct {
+	ID         string    `json:"id"`
 	Status     string    `json:"status"`
 	Email      string    `json:"email"`
 	UpdateTime time.Time `json:"updateTime"`

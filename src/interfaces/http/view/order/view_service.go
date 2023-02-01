@@ -9,6 +9,7 @@ type (
 	Service interface {
 		CreateOrder(ctx *context.ApplicationContext, userId string, order *OrderInput) (*OrderResponse, error)
 		GetOrder(ctx *context.ApplicationContext, orderId string) (*OrderResponse, error)
+		PayOrder(ctx *context.ApplicationContext, orderId string, payment PaymentResultInput) (*OrderResponse, error)
 	}
 
 	service struct {
@@ -22,6 +23,16 @@ func NewService(oUC order.Service) Service {
 	}
 
 	return &service{oUC: oUC}
+}
+
+func (s *service) PayOrder(ctx *context.ApplicationContext, orderId string, payment PaymentResultInput) (out *OrderResponse, err error) {
+	resp, err := s.oUC.PayOrder(ctx, orderId, payment.toOrderPaymentResult())
+	if err != nil {
+		return
+	}
+
+	out = toOrderResponse(resp)
+	return
 }
 
 func (s *service) CreateOrder(ctx *context.ApplicationContext, userId string, order *OrderInput) (out *OrderResponse, err error) {

@@ -46,6 +46,7 @@ type Shipping struct {
 }
 
 type PaymentResult struct {
+	ID         string    `gorm:"id"`
 	Status     string    `gorm:"status"`
 	UpdateTime time.Time `gorm:"column:update"`
 	Email      string    `gorm:"column:email"`

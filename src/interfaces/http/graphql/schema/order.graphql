@@ -32,6 +32,14 @@ type Shipping {
 }
 
 type PaymentResult {
+  id: ID!
+  status: String!
+  email: String!
+  updateTime: Time!
+}
+
+input PaymentResultInput {
+  id: ID!
   status: String!
   email: String!
   updateTime: Time!

@@ -28,6 +28,16 @@ func NewRepository(master database.ORM, slave database.ORM) order.Repository {
 	return &repo{master: master, slave: slave}
 }
 
+func (r *repo) UpdateColumn(ctx *context.ApplicationContext, data *order.Order) (err error) {
+	err = r.master.Model(&order.Order{}).Where("id = ?", data.ID.String()).UpdateColumns(data)
+	if err != nil {
+		ctx.Logger.Error("failed order.update: " + err.Error())
+		return constant.ErrorInternalServer
+	}
+
+	return nil
+}
+
 func (r *repo) Save(ctx *context.ApplicationContext, order *order.Order) (err error) {
 	err = r.master.Create(order)
 	if err != nil {
