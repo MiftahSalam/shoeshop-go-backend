@@ -3,6 +3,7 @@ package token
 import (
 	"shoeshop-backend/src/interfaces/http/context"
 	"shoeshop-backend/src/shared/constant"
+	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -34,8 +35,13 @@ func (s *service) CheckAuth(ctx *context.ApplicationContext) (userId string, err
 func (s *service) Generate(ctx *context.ApplicationContext, userId string) (result string, err error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
+	var expired int64
+	if expired, err = strconv.ParseInt(s.cfg.Options.JwtExpired, 10, 16); err != nil {
+		expired = 10
+	}
+
 	claims[JWT_USER_KEY] = userId
-	claims["exp"] = time.Now().Add(time.Minute * 10).Unix()
+	claims["exp"] = time.Now().Add(time.Minute * time.Duration(expired)).Unix()
 	tokenString, err := token.SignedString([]byte(s.cfg.Options.JwtSecret))
 	if err != nil {
 		ctx.Logger.Error("Generate Token: failed to generate token with error %s", err.Error())

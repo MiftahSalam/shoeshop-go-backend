@@ -28,6 +28,7 @@ type Application struct {
 	Options           struct {
 		SkipGqlReqBodyLog bool   `json:"skip_gql_req_body_log"`
 		JwtSecret         string `json:"jwt_secret"`
+		JwtExpired        string `json:"jwt_expired"`
 	}
 }
 
