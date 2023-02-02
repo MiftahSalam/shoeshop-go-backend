@@ -33,7 +33,7 @@ func (s *service) UpdateUser(ctx *context.ApplicationContext, id string, userInp
 		return
 	}
 
-	out = toUserResponse(res)
+	out = ToUserResponse(res)
 
 	return
 }
@@ -44,7 +44,7 @@ func (s *service) RegisterUser(ctx *context.ApplicationContext, userInput Regist
 		return
 	}
 
-	out = toUserResponse(res)
+	out = ToUserResponse(res)
 
 	return
 }
@@ -55,7 +55,7 @@ func (s *service) LoginUser(ctx *context.ApplicationContext, email, password str
 		return
 	}
 
-	out = toUserResponse(res)
+	out = ToUserResponse(res)
 
 	return
 }
@@ -66,7 +66,7 @@ func (s *service) GetUserByEmail(ctx *context.ApplicationContext, email string) 
 		return
 	}
 
-	out = toUserResponse(res)
+	out = ToUserResponse(res)
 
 	return
 }
@@ -77,7 +77,7 @@ func (s *service) GetUserById(ctx *context.ApplicationContext, id string) (out *
 		return
 	}
 
-	out = toUserResponse(res)
+	out = ToUserResponse(res)
 
 	return
 }

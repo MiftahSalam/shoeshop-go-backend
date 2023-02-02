@@ -29,8 +29,13 @@ type Product struct {
 	Reviews      []*Review `json:"reviews"`
 }
 
+type ReviewInput struct {
+	ProductID string `json:"productId"`
+	Rating    int    `json:"Rating"`
+	Comment   string `json:"Comment"`
+}
+
 type Review struct {
-	Name    string     `json:"name"`
 	Rating  int        `json:"rating"`
 	Comment string     `json:"comment"`
 	User    *user.User `json:"user"`

@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func entityToUserResponse(entity *user.User) *UserResponse {
+func EntityToUserResponse(entity *user.User) *UserResponse {
 	return &UserResponse{
 		ID:        entity.ID.String(),
 		Name:      entity.Name,

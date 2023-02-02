@@ -17,7 +17,7 @@ func (s *service) UpdateUser(ctx *context.ApplicationContext, userInput UserUpda
 		return nil, err
 	}
 
-	resp = entityToUserResponse(user)
+	resp = EntityToUserResponse(user)
 	return
 }
 
@@ -35,7 +35,7 @@ func (s *service) RegisterUser(ctx *context.ApplicationContext, userInput UserRe
 		return nil, err
 	}
 
-	resp = entityToUserResponse(createUser)
+	resp = EntityToUserResponse(createUser)
 	return
 }
 
@@ -49,7 +49,7 @@ func (s *service) LoginUser(ctx *context.ApplicationContext, email, password str
 		return nil, constant.ErrorInvalidPassword
 	}
 
-	resp = entityToUserResponse(user)
+	resp = EntityToUserResponse(user)
 	return
 }
 
@@ -59,7 +59,7 @@ func (s *service) GetById(ctx *context.ApplicationContext, id string) (resp *Use
 		return nil, err
 	}
 
-	resp = entityToUserResponse(user)
+	resp = EntityToUserResponse(user)
 	return
 }
 
@@ -69,7 +69,7 @@ func (s *service) GetByEmail(ctx *context.ApplicationContext, email string) (res
 		return nil, err
 	}
 
-	resp = entityToUserResponse(user)
+	resp = EntityToUserResponse(user)
 	return
 }
 

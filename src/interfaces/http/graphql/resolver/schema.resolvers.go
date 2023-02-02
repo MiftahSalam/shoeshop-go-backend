@@ -91,6 +91,18 @@ func (r *mutationResolver) PayOrder(ctx context.Context, id string, payment orde
 	return order, nil
 }
 
+// CreateProductReview is the resolver for the createProductReview field.
+func (r *mutationResolver) CreateProductReview(ctx context.Context, input product.ReviewInput) (string, error) {
+	appContext := ctxApp.GetAppCtxFromContext(ctx)
+
+	userId, err := r.serviceToken.CheckAuth(appContext)
+	if err != nil {
+		return "Invalid user", err
+	}
+
+	return r.productView.CreateReview(appContext, userId, input)
+}
+
 // GetProducts is the resolver for the getProducts field.
 func (r *queryResolver) GetProducts(ctx context.Context) ([]*product.Product, error) {
 	appContext := ctxApp.GetAppCtxFromContext(ctx)

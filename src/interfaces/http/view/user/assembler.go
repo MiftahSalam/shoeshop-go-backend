@@ -2,7 +2,7 @@ package user
 
 import "shoeshop-backend/src/usecase/user"
 
-func toUserResponse(user *user.UserResponse) *User {
+func ToUserResponse(user *user.UserResponse) *User {
 	return &User{
 		ID:        user.ID,
 		Name:      user.Name,

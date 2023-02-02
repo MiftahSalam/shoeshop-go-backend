@@ -11,8 +11,13 @@ type Product {
 }
 
 type Review {
-  name: String!
   rating: Int!
   comment: String!
   user: User!
+}
+
+input ReviewInput {
+  productId: ID!
+  rating: Int!
+  comment: String!
 }

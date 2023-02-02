@@ -4,7 +4,6 @@ import (
 	"shoeshop-backend/src/infrastructure/logger"
 	oRepository "shoeshop-backend/src/infrastructure/repository/postgres/order"
 	pRepository "shoeshop-backend/src/infrastructure/repository/postgres/product"
-	rRepository "shoeshop-backend/src/infrastructure/repository/postgres/review"
 	uRepository "shoeshop-backend/src/infrastructure/repository/postgres/user"
 	"shoeshop-backend/src/interfaces/http/interceptor"
 	oView "shoeshop-backend/src/interfaces/http/view/order"
@@ -14,7 +13,6 @@ import (
 	"shoeshop-backend/src/shared/database"
 	"shoeshop-backend/src/usecase/order"
 	"shoeshop-backend/src/usecase/product"
-	"shoeshop-backend/src/usecase/review"
 	"shoeshop-backend/src/usecase/token"
 	"shoeshop-backend/src/usecase/user"
 )
@@ -40,19 +38,16 @@ func Setup() *DI {
 
 	oRepo := oRepository.NewRepository(dbMaster, dbSlave)
 	pRepo := pRepository.NewRepository(dbMaster, dbSlave)
-	rRepo := rRepository.NewRepository(dbMaster, dbSlave)
 	uRepo := uRepository.NewRepository(dbMaster, dbSlave)
 
 	oService := order.NewService(oRepo, pRepo, uRepo)
-	pService := product.NewService(pRepo)
-	rService := review.NewService(rRepo)
+	pService := product.NewService(pRepo, uRepo)
 	tService := token.NewService(&cfg.Application)
 	uService := user.NewService(uRepo)
 
 	if cfg.Database.AutoMigrate {
 		pService.Migrate()
 		uService.Migrate()
-		rService.Migrate()
 		oService.Migrate()
 	}
 
