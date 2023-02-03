@@ -76,7 +76,10 @@ func (r *repo) UpdateColumn(ctx *context.ApplicationContext, pData *product.Prod
 }
 
 func (r *repo) Search(ctx *context.ApplicationContext, keyword string, offset, limit int) (products []*product.Product, err error) {
-	err = r.slave.Preload("Reviews.User").Preload(clause.Associations).Where("name LIKE ? ", "%"+keyword+"%").Offset(int64(offset - 1)).Limit(int64(limit)).Find(&products)
+	qFilter, qArg := searchFilter(keyword)
+	query := r.slave.Preload("Reviews.User").Preload(clause.Associations).Where(qFilter.String(), qArg...)
+
+	err = query.Offset(int64(limit * (offset - 1))).Limit(int64(limit)).Find(&products)
 	if err == nil {
 		return
 	}

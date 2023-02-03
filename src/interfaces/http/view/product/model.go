@@ -69,7 +69,7 @@ func (s *Search) validate() (keyword string, page int, limit int) {
 	}
 
 	if s.Limit < 1 {
-		limit = 1
+		limit = 10
 	} else if s.Limit > 100 {
 		limit = 100
 	}
