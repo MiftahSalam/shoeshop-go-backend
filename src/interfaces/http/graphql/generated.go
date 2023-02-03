@@ -103,7 +103,7 @@ type ComplexityRoot struct {
 	Query struct {
 		GetOrder       func(childComplexity int, id string) int
 		GetProduct     func(childComplexity int, id string) int
-		GetProducts    func(childComplexity int) int
+		GetProducts    func(childComplexity int, input *product.Search) int
 		GetUserOrders  func(childComplexity int) int
 		GetUserProfile func(childComplexity int) int
 		Login          func(childComplexity int, input user.Login) int
@@ -140,7 +140,7 @@ type MutationResolver interface {
 	CreateProductReview(ctx context.Context, input product.ReviewInput) (string, error)
 }
 type QueryResolver interface {
-	GetProducts(ctx context.Context) ([]*product.Product, error)
+	GetProducts(ctx context.Context, input *product.Search) ([]*product.Product, error)
 	GetProduct(ctx context.Context, id string) (*product.Product, error)
 	Login(ctx context.Context, input user.Login) (*user.User, error)
 	GetUserProfile(ctx context.Context) (*user.User, error)
@@ -483,7 +483,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.GetProducts(childComplexity), true
+		args, err := ec.field_Query_getProducts_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetProducts(childComplexity, args["input"].(*product.Search)), true
 
 	case "Query.getUserOrders":
 		if e.complexity.Query.GetUserOrders == nil {
@@ -616,6 +621,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputPaymentResultInput,
 		ec.unmarshalInputRegister,
 		ec.unmarshalInputReviewInput,
+		ec.unmarshalInputSearch,
 		ec.unmarshalInputShippingInput,
 		ec.unmarshalInputUpdateProfile,
 	)
@@ -826,6 +832,21 @@ func (ec *executionContext) field_Query_getProduct_args(ctx context.Context, raw
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getProducts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *product.Search
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOSearch2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐSearch(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -2758,7 +2779,7 @@ func (ec *executionContext) _Query_getProducts(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetProducts(rctx)
+		return ec.resolvers.Query().GetProducts(rctx, fc.Args["input"].(*product.Search))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2800,6 +2821,17 @@ func (ec *executionContext) fieldContext_Query_getProducts(ctx context.Context, 
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Product", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getProducts_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
 	}
 	return fc, nil
 }
@@ -5919,6 +5951,50 @@ func (ec *executionContext) unmarshalInputReviewInput(ctx context.Context, obj i
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputSearch(ctx context.Context, obj interface{}) (product.Search, error) {
+	var it product.Search
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"keyword", "page", "limit"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "keyword":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("keyword"))
+			it.Keyword, err = ec.unmarshalOString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "page":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+			it.Page, err = ec.unmarshalOInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "limit":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+			it.Limit, err = ec.unmarshalOInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputShippingInput(ctx context.Context, obj interface{}) (order.ShippingInput, error) {
 	var it order.ShippingInput
 	asMap := map[string]interface{}{}
@@ -7548,6 +7624,16 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
+func (ec *executionContext) unmarshalOInt2int(ctx context.Context, v interface{}) (int, error) {
+	res, err := graphql.UnmarshalInt(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
+	return res
+}
+
 func (ec *executionContext) marshalOOrderResponse2ᚕᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋorderᚐOrderResponseᚄ(ctx context.Context, sel ast.SelectionSet, v []*order.OrderResponse) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -7701,6 +7787,14 @@ func (ec *executionContext) marshalOReview2ᚕᚖshoeshopᚑbackendᚋsrcᚋinte
 	}
 
 	return ret
+}
+
+func (ec *executionContext) unmarshalOSearch2ᚖshoeshopᚑbackendᚋsrcᚋinterfacesᚋhttpᚋviewᚋproductᚐSearch(ctx context.Context, v interface{}) (*product.Search, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputSearch(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

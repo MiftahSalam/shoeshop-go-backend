@@ -104,10 +104,10 @@ func (r *mutationResolver) CreateProductReview(ctx context.Context, input produc
 }
 
 // GetProducts is the resolver for the getProducts field.
-func (r *queryResolver) GetProducts(ctx context.Context) ([]*product.Product, error) {
+func (r *queryResolver) GetProducts(ctx context.Context, input *product.Search) ([]*product.Product, error) {
 	appContext := ctxApp.GetAppCtxFromContext(ctx)
 
-	return r.productView.GetAll(appContext)
+	return r.productView.GetAll(appContext, input)
 }
 
 // GetProduct is the resolver for the getProduct field.
@@ -205,6 +205,6 @@ type queryResolver struct{ *Resolver }
 func (r *queryResolver) GetList(ctx context.Context) ([]*product.Product, error) {
 	appContext := ctxApp.GetAppCtxFromContext(ctx)
 
-	return r.productView.GetAll(appContext)
+	return r.productView.GetAll(appContext, &product.Search{})
 
 }

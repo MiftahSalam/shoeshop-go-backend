@@ -42,7 +42,7 @@ func (r *repo) AutoMigrate() {
 }
 
 func (r *repo) GetReviewByProductAndUser(ctx *context.ApplicationContext, productId, userId string) (review *product.Review, err error) {
-	err = r.slave.Where("user_id = ? and product_id", userId, productId).First(&review)
+	err = r.slave.Where("user_id = ? and product_id = ?", userId, productId).First(&review)
 	if err == nil {
 		return
 	}
@@ -63,6 +63,30 @@ func (r *repo) SaveReview(ctx *context.ApplicationContext, review *product.Revie
 	}
 
 	return nil
+}
+
+func (r *repo) UpdateColumn(ctx *context.ApplicationContext, pData *product.Product) (err error) {
+	err = r.master.Model(&product.Product{}).Where("id = ?", pData.ID.String()).UpdateColumns(pData)
+	if err != nil {
+		ctx.Logger.Error("failed order.update: " + err.Error())
+		return constant.ErrorInternalServer
+	}
+
+	return nil
+}
+
+func (r *repo) Search(ctx *context.ApplicationContext, keyword string, offset, limit int) (products []*product.Product, err error) {
+	err = r.slave.Preload("Reviews.User").Preload(clause.Associations).Where("name LIKE ? ", "%"+keyword+"%").Offset(int64(offset - 1)).Limit(int64(limit)).Find(&products)
+	if err == nil {
+		return
+	}
+
+	ctx.Logger.Error("failed product.Search:" + err.Error())
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return products, constant.ErrorDataNotFound
+	}
+
+	return products, constant.ErrorInternalServer
 }
 
 func (r *repo) GetAll(ctx *context.ApplicationContext) (products []*product.Product, err error) {

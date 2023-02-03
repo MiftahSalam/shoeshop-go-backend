@@ -29,6 +29,12 @@ type Product struct {
 	Reviews      []*Review `json:"reviews"`
 }
 
+type Search struct {
+	Keyword string `json:"keyword"`
+	Page    int    `json:"page"`
+	Limit   int    `json:"limit"`
+}
+
 type ReviewInput struct {
 	ProductID string `json:"productId"`
 	Rating    int    `json:"Rating"`
@@ -52,6 +58,23 @@ func ToProductsResponse(productsResp []*product.ProductResponse) []*Product {
 
 func (r *CreateProductRequest) ToProductUC() *product.ProductRequest {
 	return &product.ProductRequest{}
+}
+
+func (s *Search) validate() (keyword string, page int, limit int) {
+	keyword = s.Keyword
+	if s.Page < 1 {
+		page = 1
+	} else if s.Page > 1000 {
+		page = 1000
+	}
+
+	if s.Limit < 1 {
+		limit = 1
+	} else if s.Limit > 100 {
+		limit = 100
+	}
+
+	return
 }
 
 func ToProductsResponseTest(productsResp []*product.ProductResponse) []*ProductResponse {

@@ -8,7 +8,7 @@ import (
 
 type (
 	Service interface {
-		GetProducts(ctx *context.ApplicationContext) (products []*ProductResponse, err error)
+		GetProducts(ctx *context.ApplicationContext, keyword string, page, limit int) (products []*ProductResponse, err error)
 		GetProduct(ctx *context.ApplicationContext, id string) (product *ProductResponse, err error)
 		CreateReview(ctx *context.ApplicationContext, userId string, review ReviewInput) (string, error)
 		Migrate()

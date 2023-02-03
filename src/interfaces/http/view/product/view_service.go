@@ -8,7 +8,7 @@ import (
 type (
 	Service interface {
 		GetAllTest(ctx *context.ApplicationContext, request *CreateProductRequest) ([]*ProductResponse, error)
-		GetAll(ctx *context.ApplicationContext) ([]*Product, error)
+		GetAll(ctx *context.ApplicationContext, filter *Search) ([]*Product, error)
 		GetById(ctx *context.ApplicationContext, id string) (*Product, error)
 		CreateReview(ctx *context.ApplicationContext, userId string, review ReviewInput) (string, error)
 	}
@@ -35,7 +35,7 @@ func (s *service) CreateReview(ctx *context.ApplicationContext, userId string, r
 }
 
 func (s *service) GetAllTest(ctx *context.ApplicationContext, request *CreateProductRequest) (out []*ProductResponse, err error) {
-	res, err := s.pUC.GetProducts(ctx)
+	res, err := s.pUC.GetProducts(ctx, "", 0, 0)
 	if err != nil {
 		return
 	}
@@ -43,8 +43,18 @@ func (s *service) GetAllTest(ctx *context.ApplicationContext, request *CreatePro
 	return
 }
 
-func (s *service) GetAll(ctx *context.ApplicationContext) (out []*Product, err error) {
-	res, err := s.pUC.GetProducts(ctx)
+func (s *service) GetAll(ctx *context.ApplicationContext, filter *Search) (out []*Product, err error) {
+	var (
+		keyword = ""
+		page    = 1
+		limit   = 10
+	)
+
+	if filter != nil {
+		keyword, page, limit = filter.validate()
+	}
+
+	res, err := s.pUC.GetProducts(ctx, keyword, page, limit)
 	if err != nil {
 		return
 	}
