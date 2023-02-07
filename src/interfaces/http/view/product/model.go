@@ -61,7 +61,7 @@ func (r *CreateProductRequest) ToProductUC() *product.ProductRequest {
 }
 
 func (s *Search) validate() (keyword string, page int, limit int) {
-	keyword = s.Keyword
+	keyword, page, limit = s.Keyword, s.Page, s.Limit
 	if s.Page < 1 {
 		page = 1
 	} else if s.Page > 1000 {
