@@ -10,10 +10,11 @@ func toProductResponse(productResp *product.ProductResponse) *Product {
 	reviews := []*Review{}
 	for _, review := range productResp.Reviews {
 		reviewOut := &Review{
-			ID:      review.ID.String(),
-			Rating:  review.Rating,
-			Comment: review.Comment,
-			User:    user.ToUserResponse(uUC.EntityToUserResponse(review.User)),
+			ID:          review.ID.String(),
+			Rating:      review.Rating,
+			Comment:     review.Comment,
+			User:        user.ToUserResponse(uUC.EntityToUserResponse(review.User)),
+			CreatedDate: review.CreatedDate.Format("2006-01-02T15:04:05Z"),
 		}
 
 		reviews = append(reviews, reviewOut)

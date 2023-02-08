@@ -110,10 +110,11 @@ type ComplexityRoot struct {
 	}
 
 	Review struct {
-		Comment func(childComplexity int) int
-		ID      func(childComplexity int) int
-		Rating  func(childComplexity int) int
-		User    func(childComplexity int) int
+		Comment     func(childComplexity int) int
+		CreatedDate func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Rating      func(childComplexity int) int
+		User        func(childComplexity int) int
 	}
 
 	Shipping struct {
@@ -523,6 +524,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Review.Comment(childComplexity), true
+
+	case "Review.created_date":
+		if e.complexity.Review.CreatedDate == nil {
+			break
+		}
+
+		return e.complexity.Review.CreatedDate(childComplexity), true
 
 	case "Review.id":
 		if e.complexity.Review.ID == nil {
@@ -2768,6 +2776,8 @@ func (ec *executionContext) fieldContext_Product_reviews(ctx context.Context, fi
 				return ec.fieldContext_Review_comment(ctx, field)
 			case "user":
 				return ec.fieldContext_Review_user(ctx, field)
+			case "created_date":
+				return ec.fieldContext_Review_created_date(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Review", field.Name)
 		},
@@ -3505,6 +3515,50 @@ func (ec *executionContext) fieldContext_Review_user(ctx context.Context, field 
 				return ec.fieldContext_User_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Review_created_date(ctx context.Context, field graphql.CollectedField, obj *product.Review) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Review_created_date(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedDate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Review_created_date(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Review",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6698,6 +6752,13 @@ func (ec *executionContext) _Review(ctx context.Context, sel ast.SelectionSet, o
 		case "user":
 
 			out.Values[i] = ec._Review_user(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "created_date":
+
+			out.Values[i] = ec._Review_created_date(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

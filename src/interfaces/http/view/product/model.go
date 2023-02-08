@@ -42,10 +42,11 @@ type ReviewInput struct {
 }
 
 type Review struct {
-	ID      string     `json:"id"`
-	Rating  int        `json:"rating"`
-	Comment string     `json:"comment"`
-	User    *user.User `json:"user"`
+	ID          string     `json:"id"`
+	Rating      int        `json:"rating"`
+	Comment     string     `json:"comment"`
+	User        *user.User `json:"user"`
+	CreatedDate string     `json:"created_date"`
 }
 
 func ToProductsResponse(productsResp []*product.ProductResponse) []*Product {
