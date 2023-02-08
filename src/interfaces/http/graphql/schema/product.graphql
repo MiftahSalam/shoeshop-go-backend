@@ -11,6 +11,7 @@ type Product {
 }
 
 type Review {
+  id: ID!
   rating: Int!
   comment: String!
   user: User!
