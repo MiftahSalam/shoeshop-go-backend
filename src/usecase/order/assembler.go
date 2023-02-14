@@ -42,6 +42,7 @@ func entityToOrderResponse(entity *order.Order) *OrderResponse {
 		PaidAt:          entity.PaidAt,
 		IsDelivered:     entity.IsDelivered,
 		DeliveredAt:     entity.DeliveredAt,
+		CreatedAt:       entity.CreatedAt,
 	}
 }
 

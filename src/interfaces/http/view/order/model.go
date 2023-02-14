@@ -17,8 +17,8 @@ type Item struct {
 
 type ItemInput struct {
 	ProductID string  `json:"productId"`
-	Quantity  int     `json:"Quantity"`
-	Price     float64 `json:"Price"`
+	Quantity  int     `json:"quantity"`
+	Price     float64 `json:"price"`
 }
 
 type OrderInput struct {
@@ -62,15 +62,15 @@ type PaymentResultInput struct {
 }
 
 type Shipping struct {
-	Address    string `json:"Address"`
-	City       string `json:"City"`
-	PostalCode string `json:"PostalCode"`
-	Country    string `json:"Country"`
+	Address    string `json:"address"`
+	City       string `json:"city"`
+	PostalCode string `json:"postalCode"`
+	Country    string `json:"country"`
 }
 
 type ShippingInput struct {
-	Address    string `json:"Address"`
-	City       string `json:"City"`
-	PostalCode string `json:"PostalCode"`
-	Country    string `json:"Country"`
+	Address    string `json:"address"`
+	City       string `json:"city"`
+	PostalCode string `json:"postalCode"`
+	Country    string `json:"country"`
 }
