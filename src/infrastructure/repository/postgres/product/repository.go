@@ -75,6 +75,16 @@ func (r *repo) UpdateColumn(ctx *context.ApplicationContext, pData *product.Prod
 	return nil
 }
 
+func (r *repo) CountByName(ctx *context.ApplicationContext, keyword string) (total int64, err error) {
+	qFilter, qArg := searchFilter(keyword)
+	err = r.slave.Where(qFilter.String(), qArg...).Model(&product.Product{}).Count(&total)
+	if err != nil {
+		ctx.Logger.Error("failed product.CountByName: " + err.Error())
+		return 0, constant.ErrorInternalServer
+	}
+	return
+}
+
 func (r *repo) Search(ctx *context.ApplicationContext, keyword string, offset, limit int) (products []*product.Product, err error) {
 	qFilter, qArg := searchFilter(keyword)
 	query := r.slave.Preload("Reviews.User").Preload(clause.Associations).Where(qFilter.String(), qArg...)

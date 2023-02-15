@@ -8,7 +8,7 @@ import (
 type (
 	Service interface {
 		GetAllTest(ctx *context.ApplicationContext, request *CreateProductRequest) ([]*ProductResponse, error)
-		GetAll(ctx *context.ApplicationContext, filter *Search) ([]*Product, error)
+		GetAll(ctx *context.ApplicationContext, filter *Search) (*Products, error)
 		GetById(ctx *context.ApplicationContext, id string) (*Product, error)
 		CreateReview(ctx *context.ApplicationContext, userId string, review ReviewInput) (string, error)
 	}
@@ -43,7 +43,7 @@ func (s *service) GetAllTest(ctx *context.ApplicationContext, request *CreatePro
 	return
 }
 
-func (s *service) GetAll(ctx *context.ApplicationContext, filter *Search) (out []*Product, err error) {
+func (s *service) GetAll(ctx *context.ApplicationContext, filter *Search) (out *Products, err error) {
 	var (
 		keyword = ""
 		page    = 1

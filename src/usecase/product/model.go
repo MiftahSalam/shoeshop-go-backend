@@ -5,6 +5,11 @@ import "shoeshop-backend/src/domain/product"
 type ProductRequest struct {
 }
 
+type ProductsResponse struct {
+	Products  []*ProductResponse `json:"products"`
+	TotalData int64              `json:"total_data"`
+}
+
 type ProductResponse struct {
 	ID          string            `json:"id"`
 	Name        string            `json:"name"`

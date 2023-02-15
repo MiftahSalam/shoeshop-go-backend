@@ -19,13 +19,16 @@ func (rIn ReviewInput) ToReviewDomain(userIn *user.User, productIn *product.Prod
 	}
 }
 
-func (s *service) toProductsResponse(entities []*product.Product) []*ProductResponse {
+func (s *service) toProductsResponse(entities []*product.Product, dataCount int64) *ProductsResponse {
 	products := []*ProductResponse{}
 	for _, v := range entities {
 		products = append(products, entityToProdcutResponse(v))
 	}
 
-	return products
+	return &ProductsResponse{
+		Products:  products,
+		TotalData: dataCount,
+	}
 }
 
 func entityToProdcutResponse(entity *product.Product) *ProductResponse {

@@ -5,6 +5,7 @@ import (
 )
 
 type Repository interface {
+	CountByName(ctx *context.ApplicationContext, keyword string) (total int64, err error)
 	Search(ctx *context.ApplicationContext, keyword string, offset, limit int) (products []*Product, err error)
 	GetAll(ctx *context.ApplicationContext) (products []*Product, err error)
 	GetById(ctx *context.ApplicationContext, id string) (product *Product, err error)

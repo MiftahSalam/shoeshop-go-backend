@@ -29,6 +29,11 @@ type Product struct {
 	Reviews      []*Review `json:"reviews"`
 }
 
+type Products struct {
+	ProductList []*Product `json:"product_list"`
+	TotalData   int64      `json:"total_data"`
+}
+
 type Search struct {
 	Keyword string `json:"keyword"`
 	Page    int    `json:"page"`
@@ -49,13 +54,16 @@ type Review struct {
 	CreatedDate string     `json:"created_date"`
 }
 
-func ToProductsResponse(productsResp []*product.ProductResponse) []*Product {
+func ToProductsResponse(productsResp *product.ProductsResponse) *Products {
 	products := []*Product{}
-	for _, v := range productsResp {
+	for _, v := range productsResp.Products {
 		products = append(products, toProductResponse(v))
 	}
 
-	return products
+	return &Products{
+		ProductList: products,
+		TotalData:   productsResp.TotalData,
+	}
 }
 
 func (r *CreateProductRequest) ToProductUC() *product.ProductRequest {
@@ -79,9 +87,9 @@ func (s *Search) validate() (keyword string, page int, limit int) {
 	return
 }
 
-func ToProductsResponseTest(productsResp []*product.ProductResponse) []*ProductResponse {
+func ToProductsResponseTest(productsResp *product.ProductsResponse) []*ProductResponse {
 	products := []*ProductResponse{}
-	for _, v := range productsResp {
+	for _, v := range productsResp.Products {
 		products = append(products, toProductResponseTest(v))
 	}
 

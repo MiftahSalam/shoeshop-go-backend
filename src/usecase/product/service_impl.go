@@ -6,6 +6,7 @@ import (
 	"shoeshop-backend/src/shared/constant"
 
 	"github.com/google/uuid"
+	"golang.org/x/sync/errgroup"
 )
 
 func (s *service) Migrate() {
@@ -45,13 +46,28 @@ func (s *service) CreateReview(ctx *context.ApplicationContext, userId string, r
 	return "Review created", nil
 }
 
-func (s *service) GetProducts(ctx *context.ApplicationContext, keyword string, page, limit int) (products []*ProductResponse, err error) {
-	getProducts, err := s.pRepo.Search(ctx, keyword, page, limit)
-	if err != nil {
-		return nil, err
+func (s *service) GetProducts(ctx *context.ApplicationContext, keyword string, page, limit int) (products *ProductsResponse, err error) {
+	var (
+		eg          = new(errgroup.Group)
+		getProducts []*product.Product
+		count       int64
+	)
+
+	eg.Go(func() error {
+		getProducts, err = s.pRepo.Search(ctx, keyword, page, limit)
+		return err
+	})
+
+	eg.Go(func() error {
+		count, err = s.pRepo.CountByName(ctx, keyword)
+		return err
+	})
+
+	if err = eg.Wait(); err != nil {
+		return
 	}
 
-	products = s.toProductsResponse(getProducts)
+	products = s.toProductsResponse(getProducts, count)
 	return
 }
 

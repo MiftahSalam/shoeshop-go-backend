@@ -10,6 +10,11 @@ type Product {
   reviews: [Review!]
 }
 
+type Products {
+  products: [Product!]
+  totalData: Int!
+}
+
 type Review {
   id: ID!
   rating: Int!

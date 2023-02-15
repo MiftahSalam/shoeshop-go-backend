@@ -104,7 +104,7 @@ func (r *mutationResolver) CreateProductReview(ctx context.Context, input produc
 }
 
 // GetProducts is the resolver for the getProducts field.
-func (r *queryResolver) GetProducts(ctx context.Context, input *product.Search) ([]*product.Product, error) {
+func (r *queryResolver) GetProducts(ctx context.Context, input *product.Search) (*product.Products, error) {
 	appContext := ctxApp.GetAppCtxFromContext(ctx)
 
 	return r.productView.GetAll(appContext, input)
@@ -202,7 +202,7 @@ type queryResolver struct{ *Resolver }
 //   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //     it when you're done.
 //   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *queryResolver) GetList(ctx context.Context) ([]*product.Product, error) {
+func (r *queryResolver) GetList(ctx context.Context) (*product.Products, error) {
 	appContext := ctxApp.GetAppCtxFromContext(ctx)
 
 	return r.productView.GetAll(appContext, &product.Search{})

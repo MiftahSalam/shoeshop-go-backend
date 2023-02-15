@@ -4,7 +4,7 @@ schema {
 }
 
 type Query {
-  getProducts(input: Search): [Product!]
+  getProducts(input: Search): Products!
   getProduct(id: ID!): Product
   login(input: Login!): User!
   getUserProfile: User!
