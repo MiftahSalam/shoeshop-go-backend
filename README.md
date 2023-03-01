@@ -1,6 +1,6 @@
 # Simple Shoe Shop
 
-A small and simple online shoe shop service developed with go.
+A small and simple online shoe shop service developed with go ([check also MERN version](https://github.com/MiftahSalam/-shoeshop-rest-mern-backend)).
 
 Developed based on [this](https://www.youtube.com/watch?v=1NWBO8L81J8&list=PLE_Uj9ql8q9_MVzY0bMQPERz4Yulo3We4&index=1) youtube tutorial video
 
